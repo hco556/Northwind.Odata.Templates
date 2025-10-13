@@ -1,0 +1,62 @@
+@using Northwind.Shared.Employees.Commands
+<EditForm Model="@Command" OnValidSubmit="@OnValidSubmitAsync">
+    <FluentValidationValidator/>
+
+    <MudGrid>
+        <!-- First Name Row -->
+        <MudItem xs="4">
+            <MudTextField Label="First Name" @bind-Value="Command.FirstName"/>
+            <ValidationMessage For="() => Command.FirstName" style="color: red" />
+        </MudItem>
+
+        <!-- Last Name Row -->
+        <MudItem xs="4">
+            <MudTextField Label="Last Name" @bind-Value="Command.LastName"/>
+            <ValidationMessage For="() => Command.LastName" style="color: red" />
+        </MudItem>
+
+        <!-- Title Row -->
+        <MudItem xs="4">
+            <MudTextField Label="Title" @bind-Value="Command.Title"/>
+            <ValidationMessage For="() => Command.Title" style="color: red" />
+        </MudItem>
+    
+        <!-- Submit Button -->
+        <MudItem xs="4">
+            <MudButton Variant="Variant.Filled" Color="Color.Success" ButtonType="ButtonType.Submit">Submit
+            </MudButton>
+
+            <MudButton Variant="Variant.Outlined" Color="Color.Error" Href="@Routes.Pages.Employees.GetAllEmployees">Cancel
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+</EditForm>
+
+
+@code {
+
+    [Parameter, EditorRequired] 
+    public AddOrUpdateEmployeeCommand Command { get; set; } = null!;
+
+    private bool IsEditingExistingBlog => Command.EmployeeId > 0;
+
+    [Inject] 
+    public HttpClient HttpClient { get; set; } = null!;
+
+    [Inject] 
+    public NavigationManager NavigationManager { get; set; } = null!;
+
+    private async Task OnValidSubmitAsync()
+    {
+        HttpResponseMessage response;
+
+        if (IsEditingExistingBlog)
+            response = await HttpClient.PutAsJsonAsync(Routes.Api.Employees.Update, Command);
+        else
+            response = await HttpClient.PostAsJsonAsync(Routes.Api.Employees.Add, Command);
+
+        if (response.IsSuccessStatusCode)
+            NavigationManager.NavigateTo(Routes.Pages.Employees.GetAllEmployees);
+    }
+
+}

@@ -1,0 +1,40 @@
+@using Northwind.Client.Extensions
+@using Northwind.Client.Pages.Employees.Components
+@using Northwind.Shared.Employees
+@using Northwind.Shared.Employees.Commands
+@attribute [Route(Routes.Pages.Employees.Edit)]
+
+<PageTitle>Edit Employees</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Edit Employees</MudText>
+<MudText Typo="Typo.body1" Class="mb-8">This component edits existing employee data on the server.</MudText>
+
+@if (_command == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <AddOrUpdateEmployeeForm Command="_command" />
+}
+
+@code {
+    private AddOrUpdateEmployeeCommand? _command;
+
+    [Parameter]
+    public int Id { get; set; }
+    
+    [Inject]
+    public HttpClient HttpClient { get; set; } = null!;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var route = Routes.Api.Employees.GetById.Format(Id);
+        var employee = await HttpClient.GetFromJsonAsync<EmployeesDto>(route);
+        if (employee == null)
+            return;     
+
+        _command = employee.MapToCommand();           
+    }    
+}    
+

@@ -1,0 +1,10 @@
+
+GET http://localhost:5197/api/employees
+Accept: application/json
+
+###
+
+GET http://localhost:5197/api/employees/4
+Accept: application/json
+
+###

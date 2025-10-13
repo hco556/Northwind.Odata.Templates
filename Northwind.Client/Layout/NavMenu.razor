@@ -1,0 +1,17 @@
+﻿<MudNavMenu>
+    <MudNavGroup Title="Demos" Icon="@Icons.Material.Sharp.Build">
+        <MudNavLink Href=@Routes.Pages.Home Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home
+        </MudNavLink>
+        <MudNavLink Href="@Routes.Pages.Counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Counter
+        </MudNavLink>
+        <MudNavLink Href="@Routes.Pages.Weather" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Cloud">Weather
+        </MudNavLink>
+    </MudNavGroup>
+  
+    <MudNavGroup Title="Employees" Icon="@Icons.Material.Filled.DataObject">
+        <MudNavLink Href="@Routes.Pages.Employees.GetAPIDocumentation"
+                    Icon="@Icons.Material.Filled.Api" Target="_blank">API Documentation</MudNavLink>
+        <MudNavLink Href="@Routes.Pages.Employees.GetAllEmployees" Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.ListAlt">All Employees</MudNavLink>
+    </MudNavGroup>
+</MudNavMenu>

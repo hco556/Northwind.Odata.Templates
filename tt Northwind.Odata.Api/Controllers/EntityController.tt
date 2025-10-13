@@ -1,0 +1,84 @@
+<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<#@ parameter name="EntityName" type="System.String" #>
+<#@ parameter name="EntityKey" type="System.String" #>
+<#@ parameter name="RepositoryInterface" type="System.String" #>
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
+using Microsoft.AspNetCore.OData.Results;
+using Shared.Models;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Northwind.Odata.Api.Controllers
+{
+    public class <#= EntityName #>Controller : ODataController
+    {
+        private readonly <#= RepositoryInterface #> _repository;
+
+        public <#= EntityName #>Controller(<#= RepositoryInterface #> repository)
+        {
+            _repository = repository;
+        }
+
+        [EnableQuery]
+        [HttpGet("odata/<#= EntityName #>s")]
+        [HttpGet("odata/<#= EntityName #>s/$count")]
+        public async Task<IActionResult> Get(CancellationToken cancellationToken)
+        {
+            var result = await _repository.GetAllAsync(cancellationToken);
+            return Ok(result);
+        }
+
+        [EnableQuery]
+        [HttpGet("odata/<#= EntityName #>s({<#= EntityKey #>})")]
+        public async Task<IActionResult> Get([FromRoute] int <#= EntityKey #>, CancellationToken cancellationToken)
+        {
+            var entity = await _repository.GetByIdAsync(<#= EntityKey #>, cancellationToken);
+            if (!entity.Any())
+            {
+                return NotFound();
+            }
+            return Ok(SingleResult.Create(entity));
+        }
+
+        [HttpPost("odata/<#= EntityName #>s")]
+        public async Task<IActionResult> Post([FromBody] <#= EntityName #> entity, CancellationToken cancellationToken)
+        {
+            await _repository.AddAsync(entity, cancellationToken);
+            await _repository.SaveChangesAsync(cancellationToken);
+            return Created(entity);
+        }
+
+        [HttpPut("odata/<#= EntityName #>s({<#= EntityKey #>})")]
+        public async Task<IActionResult> Put([FromRoute] int <#= EntityKey #>, [FromBody] <#= EntityName #> entity, CancellationToken cancellationToken)
+        {
+            var original = await _repository.FindAsync(<#= EntityKey #>, cancellationToken);
+            if (original == null)
+            {
+                return NotFound();
+            }
+            await _repository.UpdateAsync(entity, cancellationToken);
+            await _repository.SaveChangesAsync(cancellationToken);
+            return Ok(entity);
+        }
+
+        [HttpDelete("odata/<#= EntityName #>s({<#= EntityKey #>})")]
+        public async Task<IActionResult> Delete([FromRoute] int <#= EntityKey #>, CancellationToken cancellationToken)
+        {
+            var original = await _repository.FindAsync(<#= EntityKey #>, cancellationToken);
+            if (original == null)
+            {
+                return NotFound();
+            }
+            await _repository.RemoveAsync(original, cancellationToken);
+            await _repository.SaveChangesAsync(cancellationToken);
+            return Ok();
+        }
+    }
+}
