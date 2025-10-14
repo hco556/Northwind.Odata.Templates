@@ -1,4 +1,4 @@
-﻿<#@ output extension=".cs"#>
+<#@ output extension=".cs"#>
 <#@ template language="C#" hostspecific="True" #>
 <#
     var entitySets = new EntitySet[] 
@@ -48,8 +48,8 @@ namespace Northwind.Odata.Api.Controllers
 
 
         [EnableQuery]
-        [HttpGet("odata/<#= entitySet.EntitySetName #>")]
-        [HttpGet("odata/<#= entitySet.EntitySetName #>/$count")]
+        [HttpGet("odata/<#= entitySet.EntitySetName #>s")]
+        [HttpGet("odata/<#= entitySet.EntitySetName #>s/$count")]
         public async Task<IActionResult> Get<#= entitySet.EntitySetName #>(CancellationToken cancellationToken)
         {
             var result = await _repository.GetAllAsync(cancellationToken);
@@ -57,7 +57,7 @@ namespace Northwind.Odata.Api.Controllers
         }
 
         [EnableQuery]
-        [HttpGet("odata/<#= entitySet.EntitySetName #>({key})")]
+        [HttpGet("odata/<#= entitySet.EntitySetName #>s({key})")]
         public async Task<IActionResult> Get<#= entitySet.EntitySetName #>(<#= entitySet.EntityKeyType #> key, CancellationToken cancellationToken)
         {
             _logger.TraceMethodEntry();
@@ -78,7 +78,8 @@ namespace Northwind.Odata.Api.Controllers
 
             return Ok(entity);
         }
-                [HttpPost("odata/<#= entitySet.EntitySetName #>")]
+
+        [HttpPost("odata/<#= entitySet.EntitySetName #>s")]
         public async Task<IActionResult> Post<#= entitySet.EntityName #>([FromBody]<#= entitySet.EntityName #> entity, CancellationToken cancellationToken)
         {
             _logger.TraceMethodEntry();
@@ -94,7 +95,7 @@ namespace Northwind.Odata.Api.Controllers
             return Created(entity);
         }
 
-        [HttpPut("odata/<#= entitySet.EntitySetName #>({key})")]
+        [HttpPut("odata/<#= entitySet.EntitySetName #>s({key})")]
         public async Task<IActionResult> Put<#= entitySet.EntityName #>(<#= entitySet.EntityKeyType #> key, [FromBody] <#= entitySet.EntityName #> entity, CancellationToken cancellationToken)
         {
             _logger.TraceMethodEntry();
@@ -122,7 +123,7 @@ namespace Northwind.Odata.Api.Controllers
             return Ok(original);
         }
 
-        [HttpPatch("odata/<#= entitySet.EntitySetName #>({key})")]
+        [HttpPatch("odata/<#= entitySet.EntitySetName #>s({key})")]
         public async Task <IActionResult> Patch<#= entitySet.EntityName #>(<#= entitySet.EntityKeyType #> key, Delta<<#= entitySet.EntityName #>> delta)
         {
             _logger.TraceMethodEntry();
@@ -150,7 +151,7 @@ namespace Northwind.Odata.Api.Controllers
             return Updated(original);
         }
 
-        [HttpDelete("odata/<#= entitySet.EntitySetName #>({key})")]
+        [HttpDelete("odata/<#= entitySet.EntitySetName #>s({key})")]
         public async Task<IActionResult> Delete<#= entitySet.EntityName #>(<#= entitySet.EntityKeyType #> key, CancellationToken cancellationToken)
         {
             var original = await _repository.FindAsync(key, cancellationToken);
@@ -170,7 +171,7 @@ namespace Northwind.Odata.Api.Controllers
         }
 
 
-        [HttpDelete("odata/<#= entitySet.EntitySetName #>({<#= entitySet.EntityKeyType #>})")]
+        [HttpDelete("odata/<#= entitySet.EntitySetName #>s({<#= entitySet.EntityKeyType #>})")]
         public async Task<IActionResult> Delete([FromRoute] <#= entitySet.EntityKeyType #> key, CancellationToken cancellationToken)
         {
             var original = await _repository.FindAsync(key, cancellationToken);

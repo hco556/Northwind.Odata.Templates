@@ -15,9 +15,9 @@ namespace Northwind.Odata.Api.Models
 
             modelBuilder.Namespace = "NorthwindService";
 
-            modelBuilder.EntitySet<Product>("Products"); // Example entity
-            modelBuilder.EntitySet<Category>("Categories"); // Example entity
-            modelBuilder.EntitySet<Order>("Orders"); // Example entity
+            //modelBuilder.EntitySet<Product>("Products"); // Example entity
+            //modelBuilder.EntitySet<Category>("Categories"); // Example entity
+            //modelBuilder.EntitySet<Order>("Orders"); // Example entity
             modelBuilder.EntitySet<Employee>("Employees"); // Example entity
             // Send as Lower Camel Case Properties, so the JSON looks better:
             modelBuilder.EnableLowerCamelCase();

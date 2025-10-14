@@ -1,4 +1,4 @@
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http.Features;
@@ -14,14 +14,15 @@ using Northwind.Odata.Api.Infrastructure.Errors;
 using Northwind.Odata.Api.Infrastructure.Spatial;
 using Northwind.Odata.Api.Models;
 using Northwind.Odata.Api.Data;
-
-// We will log to %LocalAppData%/LogWideWorldImporters to store the Logs, so it doesn't need to be configured 
+using Microsoft.EntityFrameworkCore.InMemory;
+using Northwind.OData.Api.Helpers;
+// We will log to %LocalAppData%/LogNorthwind to store the Logs, so it doesn't need to be configured 
 // to a different path, when you run it on your machine.
-string logDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WideWorldImporters");
+string logDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Northwind");
 
 // We are writing with RollingFileAppender using a daily rotation, and we want to have the filename as 
-// as "LogWideWorldImporters-{Date}.log", the "{Date}" placeholder will be replaced by Serilog itself.
-string logFilePath = Path.Combine(logDirectory, "LogWideWorldImporters-.log");
+// as "LogNorthwind-{Date}.log", the "{Date}" placeholder will be replaced by Serilog itself.
+string logFilePath = Path.Combine(logDirectory, "LogNorthwind-.log");
 
 // Configure the Serilog Logger. This Serilog Logger will be passed 
 // to the Microsoft.Extensions.Logging LoggingBuilder using the 
@@ -46,20 +47,21 @@ try
         .AddUserSecrets<Program>();
 
     // Database
-    builder.Services.AddDbContext<NorthwindContext>(options =>
-    {
-        var connectionString = builder.Configuration.GetConnectionString("NorthwindConnection");
+    //builder.Services.AddDbContext<NorthwindContext>(options =>
+    //{
+    //    var connectionString = builder.Configuration.GetConnectionString("NorthwindConnection");
 
-        if (connectionString == null)
-        {
-            throw new InvalidOperationException("No ConnectionString named 'ApplicationDatabase' was found");
-        }
+    //    if (connectionString == null)
+    //    {
+    //        throw new InvalidOperationException("No ConnectionString named 'ApplicationDatabase' was found");
+    //    }
 
-        options
-            .UseSqlServer(connectionString, o => o.UseNetTopologySuite())
-            .EnableSensitiveDataLogging();
-    });
-
+    //    options
+    //        .UseSqlServer(connectionString, o => o.UseNetTopologySuite())
+    //        .EnableSensitiveDataLogging();
+    //});
+    builder.Services.AddDbContextFactory<NorthwindContext>(options =>
+    options.UseInMemoryDatabase("NorthwindDb"));
     // Antiforgery
     builder.Services.AddAntiforgery();
 
@@ -147,7 +149,7 @@ try
         app.UseSwagger();
         app.UseSwaggerUI(options =>
         {
-            options.SwaggerEndpoint("https://localhost:5000/odata/openapi.json", "WideWorldImporters Service");
+            options.SwaggerEndpoint("https://localhost:5000/odata/openapi.json", "Northwind Service");
         });
     }
 
@@ -157,6 +159,12 @@ try
 
     app.MapControllers();
 
+    using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+    {
+        var db = serviceScope.ServiceProvider.GetRequiredService<NorthwindContext>();
+
+        ODataAPIDbHelper.SeedDb(db);
+    }
     app.Run();
 }
 catch (Exception exception)

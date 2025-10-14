@@ -5,7 +5,7 @@ using Northwind.Odata.Api.Client.Odata;
 using Northwind.Odata.Api.Client;
 using Northwind.Odata.Api.Client.Odata.Employees;
 using Northwind.Odata.Api.Client.Models;
-
+using Microsoft.EntityFrameworkCore.InMemory;
 // API requires no authentication, so use the anonymous
 // authentication provider
 var authProvider = new AnonymousAuthenticationProvider();
