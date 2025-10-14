@@ -100,8 +100,8 @@ Visit http://localhost:5000 **(your port must be different)** in your browser an
 Feel free to modify, customize, and build upon this template for your own Blazor web projects. Happy coding! 😊
 
 
-#T4 templates & Kiota api client generation
-Project Northwind.Odata.Api:
+# T4 templates & Kiota api client generation
+## Project Northwind.Odata.Api:
 This project also includes T4 templates for code generation and Kiota for generating API clients.
 - T4 Templates: Used for generating repetitive code structures, reducing boilerplate code, and improving maintainability.
 - Kiota: A tool for generating API clients from OpenAPI descriptions, making it easier to interact with RESTful APIs.
@@ -109,7 +109,8 @@ This project also includes T4 templates for code generation and Kiota for genera
 - Benefits: Using T4 templates and Kiota can significantly speed up development time, ensure consistency in code, and simplify API interactions.
 - Getting Started: To get started with T4 templates, you can refer to the official [T4 documentation](https://docs.microsoft.com/en-us/visualstudio/modeling/code-generation-and-t4-text-templates). For Kiota, check out the [Kiota GitHub repository](
 
-- Northwind.Odata.Api.Client kiota client generation commands:
+## Northwind.Odata.Api.Client
+- kiota client generation commands:
 - https://learn.microsoft.com/en-us/openapi/kiota/quickstarts/dotnet
 - Create Console App Northwind.Odata.Api.Client
 - install kiota bundle:Microsoft.Kiota.Bundle
@@ -118,3 +119,9 @@ This project also includes T4 templates for code generation and Kiota for genera
 - dotnet tool install --global Microsoft.OpenApi.Kiota
 - Generate the client code using the Kiota CLI:
 - kiota generate -l CSharp -c NorthwindClient -n Northwind.Odata.Api.Client -d https://localhost:5000/odata/openapi.json -o ./Northwind.Odata.Api.Client
+
+# To Do's:
+## Use Relection in T4 templates:
+- example: https://blog.jermdavis.dev/posts/2023/migrating-t4-to-source-generators#top
+
+- ## Add Validation using T4 templates

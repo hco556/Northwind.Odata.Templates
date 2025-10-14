@@ -32,6 +32,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>EntitiesRepository.tt</DependentUpon>
     </None>
+    <None Include="T4\Test2.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Test2.tt</DependentUpon>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -88,6 +93,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>EntitiesRepository.tt</DependentUpon>
     </Compile>
+    <Compile Update="T4\Test2.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Test2.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -106,6 +116,14 @@
     <None Update="Repositories\EntitiesRepository.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>EntitiesRepository.cs</LastGenOutput>
+    </None>
+    <None Update="T4\Test1.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Test1.cs</LastGenOutput>
+    </None>
+    <None Update="T4\Test2.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Test2.cs</LastGenOutput>
     </None>
   </ItemGroup>
 
