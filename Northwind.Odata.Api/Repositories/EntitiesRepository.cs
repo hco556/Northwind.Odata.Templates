@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +24,7 @@ public class EmployeeRepository : IEmployeeRepository
     public async Task AddAsync(Employee entity, CancellationToken cancellationToken = default)
     {
         await _context.Set<Employee>().AddAsync(entity, cancellationToken);
+        await SaveChangesAsync();
     }
 
     public async Task UpdateAsync(Employee entity, CancellationToken cancellationToken = default)
@@ -32,12 +33,14 @@ public class EmployeeRepository : IEmployeeRepository
         if (original != null)
         {
             _context.Entry(original).CurrentValues.SetValues(entity);
+            await SaveChangesAsync();
         }
     }
 
     public async Task RemoveAsync(Employee entity, CancellationToken cancellationToken = default)
     {
         _context.Set<Employee>().Remove(entity);
+        await SaveChangesAsync();
         await Task.CompletedTask;
     }
 

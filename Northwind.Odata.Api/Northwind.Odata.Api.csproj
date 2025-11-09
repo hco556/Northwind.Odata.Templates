@@ -32,11 +32,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>EntitiesRepository.tt</DependentUpon>
     </None>
-    <None Include="T4\Test2.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Test2.tt</DependentUpon>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -93,11 +88,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>EntitiesRepository.tt</DependentUpon>
     </Compile>
-    <Compile Update="T4\Test2.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Test2.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -108,6 +98,18 @@
     <None Update="Controllers\EntitiesController1.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>EntitiesController1.cs</LastGenOutput>
+    </None>
+    <None Update="Controllers\EntitiesController2.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>EntitiesController2.cs</LastGenOutput>
+    </None>
+    <None Update="Controllers\EntitiesRepository2.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>EntitiesRepository2.cs</LastGenOutput>
+    </None>
+    <None Update="Controllers\IEntitiesRepository2.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>IEntitiesRepository2.cs</LastGenOutput>
     </None>
     <None Update="Interfaces\IEntitiesRepository.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -120,10 +122,6 @@
     <None Update="T4\Test1.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Test1.cs</LastGenOutput>
-    </None>
-    <None Update="T4\Test2.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Test2.cs</LastGenOutput>
     </None>
   </ItemGroup>
 
