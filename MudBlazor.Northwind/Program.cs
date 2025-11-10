@@ -1,11 +1,12 @@
-﻿using Microsoft.Kiota.Abstractions.Authentication;
+﻿using MetadataExtractor;
+using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
+using MudBlazor;
+using MudBlazor.Extensions;
 using MudBlazor.Northwind;
 using MudBlazor.Northwind.Components;
 using MudBlazor.Northwind.Services;
 using MudBlazor.Services;
-
-
 using Northwind.Odata.Api.Client;
 using Northwind.Odata.Api.Models;
 using Shared.Models;
@@ -15,12 +16,13 @@ using Shared.Models.Shared.ViewModels;
 using System.ComponentModel;
 using System.Diagnostics.Eventing.Reader;
 using System.Reflection;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add MudBlazor services
 builder.Services.AddMudServices();
-
+builder.Services.AddMudExtensions();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -90,7 +92,42 @@ app.UseHttpsRedirection();
 app.UseAntiforgery();
 
 app.MapStaticAssets();
+app.Use(MudExWebApp.MudExMiddleware);
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
+
+
+//Setting up MudBlazor.Extensions involves three steps:
+
+//Update the _Imports.razor with the following lines:
+
+//@using MudBlazor.Extensions
+//@using MudBlazor.Extensions.Components
+//@using MudBlazor.Extensions.Components.ObjectEdit
+//Register MudBlazor.Extensions in your Startup.cs in the ConfigureServices method.
+
+//// use this to add MudServices and the MudBlazor.Extensions
+//builder.Services.AddMudServicesWithExtensions();
+
+//// or this to add only the MudBlazor.Extensions but please ensure that this is added after mud servicdes are added. That means after `AddMudServices`
+//builder.Services.AddMudExtensions();
+//(Optional)Define default dialogOptions.
+
+//builder.Services.AddMudServicesWithExtensions(c =>
+//{
+//    c.WithDefaultDialogOptions(ex =>
+//    {
+//        ex.Position = DialogPosition.BottomRight;
+//    });
+//});
+//if your are running on Blazor Server side, you should also use the MudBlazorExtensionMiddleware you can do this in your startup or program.cs by adding the following line on your WebApplication:
+
+//    app.Use(MudExWebApp.MudExMiddleware);
+//(Optional) if you have problems with automatic loaded styles you can also load the styles manually by adding the following line to your index.html or _Host.cshtml
+
+//<link id="mudex-styles" href="_content/MudBlazor.Extensions/mudBlazorExtensions.min.css" rel="stylesheet">
+//If you have loaded styles manually you should disable the automatic loading of the styles in the AddMudExtensions or AddMudServicesWithExtensions method. You can do this by adding the following line to your Startup.cs in the ConfigureServices method.
+
+//builder.Services.AddMudServicesWithExtensions(c => c.WithoutAutomaticCssLoading());

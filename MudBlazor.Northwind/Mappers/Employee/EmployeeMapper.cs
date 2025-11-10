@@ -14,14 +14,16 @@ namespace MudBlazor.Northwind.Mappers.Employee
             foreach (var employee in employees)
             {
                 if (employee is null) continue; // tolerate null entries in the list
-                result.Add(MapEmployeeToViewModel(employee));
+                EmployeeViewModel? employeeViewModel = MapEmployeeToViewModel(employee);
+                if(employeeViewModel is null) continue;
+                result.Add(employeeViewModel);
             }
 
             return result;
         }
-        public static EmployeeViewModel MapEmployeeToViewModel(OdataClientModels.Employee employee)
+        public static EmployeeViewModel? MapEmployeeToViewModel(OdataClientModels.Employee employee)
         {
-            if (employee is null) throw new ArgumentNullException(nameof(employee));
+            if (employee is null) return null;
 
             return new EmployeeViewModel
             {
@@ -41,7 +43,7 @@ namespace MudBlazor.Northwind.Mappers.Employee
                 Extension = employee.Extension,
                 Photo = employee.Photo,
                 Notes = employee.Notes,
-                ReportsTo = employee.ReportsTo,
+               // ReportsTo = employee.ReportsTo,
                 PhotoPath = employee.PhotoPath,
                 //InverseReportsToNavigation = employee.InverseReportsToNavigation != null
                 //    ? new List<Employee>(employee.InverseReportsToNavigation)
@@ -49,7 +51,7 @@ namespace MudBlazor.Northwind.Mappers.Employee
                 //Orders = employee.Orders != null
                 //    ? new List<Order>(employee.Orders)
                 //    : new List<Order>(),
-                //ReportsToNavigation = employee.ReportsToNavigation,
+                ReportsToEmployee = MapEmployeeToViewModel(employee.ReportsToNavigation),
                 //Territories = employee.Territories != null
                 //    ? new List<Territory>(employee.Territories)
                 //    : new List<Territory>()

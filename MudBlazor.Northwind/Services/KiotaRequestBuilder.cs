@@ -29,6 +29,8 @@ namespace MudBlazor.Northwind.Services
             //https://localhost:5000/odata/Employees?%24top=50
             var employeesFitered = await employeesRequestBuilder.WithUrl("https://localhost:5000/odata/Employees?$top=1").GetAsync();
 
+            
+
             var employeeCollectionResponse = await employeesRequestBuilder.GetAsync(rc =>
             {
                 rc.QueryParameters.Filter = $"lastName eq '{lastName}'";

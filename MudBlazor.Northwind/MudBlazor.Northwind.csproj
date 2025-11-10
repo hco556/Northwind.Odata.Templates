@@ -11,6 +11,7 @@
     <PackageReference Include="Blazored.FluentValidation" Version="2.2.0" />
     <PackageReference Include="FluentValidation" Version="12.1.0" />
     <PackageReference Include="MudBlazor" Version="8.*" />
+    <PackageReference Include="MudBlazor.Extensions" Version="8.14.0" />
   </ItemGroup>
 
 
@@ -23,7 +24,12 @@
   <ItemGroup>
     <None Update="Components\Pages\MudFormTemplate.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>MudFormTemplate.razor</LastGenOutput>
+      <LastGenOutput>MudFormTemplate.txt</LastGenOutput>
+    </None>
+    <None Update="Components\Pages\MudFormTemplate.txt">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MudFormTemplate.tt</DependentUpon>
     </None>
   </ItemGroup>
 
@@ -34,16 +40,16 @@
 
 
   <ItemGroup>
-    <Content Update="Components\Pages\MudFormTemplate.razor">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>MudFormTemplate.tt</DependentUpon>
-    </Content>
+    <Folder Include="Components\Employees\" />
+    <Folder Include="Shared\" />
   </ItemGroup>
 
 
   <ItemGroup>
-    <Folder Include="Components\Employees\" />
-    <Folder Include="Shared\" />
+    <Compile Update="Components\Pages\MudFormTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MudFormTemplate.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

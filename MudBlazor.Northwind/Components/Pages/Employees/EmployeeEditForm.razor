@@ -4,7 +4,10 @@
 @using MudBlazor
 @using MudBlazor.Northwind.Mappers.Employee
 @using MudBlazor.Northwind.Services
+@using Shared.Models
 @using Shared.Models.Shared.ViewModels
+@using MudBlazor.Extensions
+@using MudBlazor.Extensions.Options
 @inject NavigationManager NavigationManager
 
 <EditForm Model="@Model"  OnValidSubmit="HandleValidSubmit" >
@@ -98,6 +101,28 @@
                 <MudItem xs="12">
                     <MudTextField Label="Notes" @bind-Value="Model.Notes" Lines="3" />
                 </MudItem>
+                  <MudItem xs="12">
+                    <MudExSelect T="EmployeeViewModel" Label="Reports To"
+                                 ItemCollection="@_managers"
+                                 Value="@Model.ReportsToEmployee"
+                                 ValueChanged="@ReportsToEmployeeChanged"
+                                 MultiSelection="false"
+                                 SearchBox="true"
+                                 SearchBoxVariant="Variant.Text"
+                                 Color="Color.Primary"
+                                 SelectAll="false">
+                    </MudExSelect>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudExSelect T="OrderViewModel"
+                                 Variant="Variant.Text"
+                                 SelectedValues="@(Model.Orders)"          
+                                 MultiSelection="true"
+                                 SelectAll="true"
+                                 PopoverAnimation="AnimationType.Pulse"
+                                 ItemCollection="@_orders" SearchBox="true" Label="Orders" AnchorOrigin="Origin.BottomCenter">
+                    </MudExSelect>
+                </MudItem>
 @*                 <MudItem xs="12">
                     <MudPaper Class="pa-4 mud-height-full">
                         <MudText Typo="Typo.subtitle2">Validation Summary</MudText>
@@ -133,19 +158,32 @@
     // [Parameter]
     //  public EventCallback<EmployeeViewModel> OnValidSubmit { get; set; }
 
-   // private EditContext? _editContext;
-
+    // private EditContext? _editContext;
+    private List<EmployeeViewModel> _managers = new();
+    private List<OrderViewModel> _orders = new();
     protected override async Task OnInitializedAsync()
     {
         Model = await kiotaRequestBuilder.GetEmployeeByName("Doe");
 
         Model ??= new EmployeeViewModel()
         {
-            
-        };
-      //  _editContext = new EditContext(Model);
-    }
 
+        };
+        _managers = (await kiotaRequestBuilder.GetAllEmployees()).Where(e => e.EmployeeId != Model.EmployeeId).ToList();
+        if (_orders.Count == 0)
+        {
+            _orders.Add(new OrderViewModel { CustomerId = "Customer1", EmployeeId = null, OrderDate = DateTime.Now, OrderId = 1 }); 
+            _orders.Add(new OrderViewModel { CustomerId = "Customer2", EmployeeId = null, OrderDate = DateTime.Now, OrderId = 2 });
+            _orders.Add(new OrderViewModel { CustomerId = "Customer3", EmployeeId = null, OrderDate = DateTime.Now, OrderId = 3 });
+            _orders.Add(new OrderViewModel { CustomerId = "Customer4", EmployeeId = null, OrderDate = DateTime.Now, OrderId = 4 });
+            _orders.Add(new OrderViewModel { CustomerId = "Customer5", EmployeeId = null, OrderDate = DateTime.Now, OrderId = 5 });
+        }
+        //  _editContext = new EditContext(Model);
+    }
+    private async Task ReportsToEmployeeChanged(EmployeeViewModel obj)
+    {
+        Model.ReportsToEmployee = obj;
+    }
     private async Task HandleValidSubmit()
     {
         // Model passed DataAnnotations validation (including NotInFuture and PasswordComplexity)

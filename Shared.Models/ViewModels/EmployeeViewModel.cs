@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Shared.Models.Shared.ViewModels;
 
-public partial class EmployeeViewModel
+public class EmployeeViewModel
 {
     [DisplayName("Employee Id")]
     [FormControl(FormControlType.Numeric,true,true)]
@@ -58,16 +58,23 @@ public partial class EmployeeViewModel
 
     public string? Notes { get; set; }
 
-    public int? ReportsTo { get; set; }
+    //public int? ReportsTo { get; set; }
 
     public string? PhotoPath { get; set; }
 
 
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+    [DisplayName("Orders for Employee")]
+    [FormControl(FormControlType.DropDownMultiSelect, false, false)]
+    public virtual List<OrderViewModel> Orders { get; set; } = new List<OrderViewModel>();
 
-    public virtual Employee? ReportsToNavigation { get; set; }
+    [DisplayName("Reports To")]
+    [FormControl(FormControlType.DropDownSingleSelect, false, false)]
+    public virtual EmployeeViewModel? ReportsToEmployee { get; set; }
 
     public virtual ICollection<Territory> Territories { get; set; } = new List<Territory>();
 
-  
+    public override string ToString()
+    {
+        return  FirstName + " " + LastName;
+    }
 }
