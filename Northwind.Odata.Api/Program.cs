@@ -7,15 +7,19 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.OData.Batch;
 using Microsoft.AspNetCore.OData.Query.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.InMemory;
 using Microsoft.OData;
-using Serilog;
-using Serilog.Sinks.SystemConsole.Themes;
+using Northwind.Odata.Api.Data;
+using Northwind.Odata.Api.Helpers;
 using Northwind.Odata.Api.Infrastructure.Errors;
 using Northwind.Odata.Api.Infrastructure.Spatial;
 using Northwind.Odata.Api.Models;
-using Northwind.Odata.Api.Data;
-using Microsoft.EntityFrameworkCore.InMemory;
 using Northwind.OData.Api.Helpers;
+using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
+using Shared.Models;
+using System.ComponentModel;
+using System.Reflection;
 // We will log to %LocalAppData%/LogNorthwind to store the Logs, so it doesn't need to be configured 
 // to a different path, when you run it on your machine.
 string logDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Northwind");
@@ -113,13 +117,16 @@ try
 
     var app = builder.Build();
 
-    // We want all Exceptions to return an ODataError in the Response. So all Exceptions should be handled and run through
-    // this ExceptionHandler. This should only happen for things deep down in the ASP.NET Core stack, such as not resolving
-    // routes.
-    // 
-    // Anything else should run through the Controllers and the Error Handlers are going to work there.
-    //
-    app.UseExceptionHandler(options =>
+
+
+
+// We want all Exceptions to return an ODataError in the Response. So all Exceptions should be handled and run through
+// this ExceptionHandler. This should only happen for things deep down in the ASP.NET Core stack, such as not resolving
+// routes.
+// 
+// Anything else should run through the Controllers and the Error Handlers are going to work there.
+//
+app.UseExceptionHandler(options =>
     {
         options.Run(async context =>
         {

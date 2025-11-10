@@ -1,0 +1,140 @@
+﻿@page "/testmud"
+@using System.Reflection
+@using Microsoft.Kiota.Abstractions.Authentication
+@using Microsoft.Kiota.Http.HttpClientLibrary
+@using global::Northwind.Odata.Api.Client
+@using global::Northwind.Odata.Api.Client.Models
+@using global::Northwind.Odata.Api.Client.Odata.Employees
+<h3>TestMud</h3>
+
+    
+<MudPaper Class="pa-4" Elevation="4">
+        <MudForm @ref="form" Model="@employee">
+        <MudTextField @bind-Value="employee.FirstName" Label="First Name" Required="true" />
+        <MudTextField @bind-Value="employee.LastName" Label="Last Name" Required="true" />
+        <MudTextField @bind-Value="employee.Title" Label="Title" />
+        <MudTextField @bind-Value="employee.TitleOfCourtesy" Label="Courtesy Title" />
+@*         <MudDatePicker @bind-Date="Convert.ToDateTime(employee.BirthDate)" Label="Birth Date" />
+        <MudDatePicker @bind-Date="Convert.ToDateTime(employee.HireDate)" Label="Hire Date" /> *@
+        <MudTextField @bind-Value="employee.Address" Label="Address" />
+        <MudTextField @bind-Value="employee.City" Label="City" />
+        <MudTextField @bind-Value="employee.Region" Label="Region" />
+        <MudTextField @bind-Value="employee.PostalCode" Label="Postal Code" />
+        <MudTextField @bind-Value="employee.Country" Label="Country" />
+        <MudTextField @bind-Value="employee.HomePhone" Label="Home Phone" />
+        <MudTextField @bind-Value="employee.Extension" Label="Extension" />
+        <MudTextField @bind-Value="employee.Notes" Label="Notes" TextArea="true" />
+        <MudTextField @bind-Value="employee.PhotoPath" Label="Photo Path" />
+
+            <MudButton OnClick="SubmitForm">Submit</MudButton>
+    </MudForm>
+    </MudPaper>
+    @if (success)
+    {
+        <MudAlert Severity="Severity.Success">Form submitted successfully!</MudAlert>
+    }
+   
+
+@code {
+    private IAuthenticationProvider authProvider;
+    // Create request adapter using the HttpClient-based implementation
+    private HttpClientRequestAdapter adapter;
+    // Create the API client
+    private NorthwindClient client;
+    private Employee employee;
+    private MudForm form;
+    private bool success;
+    private string[] errors;
+    private async Task SubmitForm()
+    {
+        try
+        {
+            EmployeesRequestBuilder employeesRequestBuilder = client.Odata.Employees;
+            var resp = await employeesRequestBuilder.PostAsync(employee);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        authProvider = new AnonymousAuthenticationProvider();
+    // Create request adapter using the HttpClient-based implementation
+    adapter = new HttpClientRequestAdapter(authProvider);
+    // Create the API client
+    client = new NorthwindClient(adapter);
+        employee = new Employee
+        {
+            FirstName = "John",
+            LastName = "Doe",
+            Title = "Software Engineer",
+            TitleOfCourtesy = "Mr.",
+            BirthDate = DateTimeOffset.Now.AddYears(-30),
+            HireDate = DateTimeOffset.Now,
+            Address = "123 Main St",
+            City = "Anytown",
+            Region = "CA",
+            PostalCode = "12345",
+            Country = "USA",
+            HomePhone = "555-1234",
+            Extension = "123",
+            Notes = "New employee",
+            PhotoPath = "/photos/johndoe.jpg"
+
+        };
+        // API requires no authentication, so use the anonymous
+        // authentication provider
+
+
+        try
+        {
+
+            EmployeesRequestBuilder employeesRequestBuilder = client.Odata.Employees;
+            var employees = await employeesRequestBuilder.GetAsync();
+
+            Console.WriteLine($"Retrieved {employees.Value?.Count} employees.");
+            // var resp = await employeesRequestBuilder.PostAsync(new Employee
+            //     {
+            //         FirstName = "John",
+            //         LastName = "Doe",
+            //         Title = "Software Engineer",
+            //         TitleOfCourtesy = "Mr.",
+            //         BirthDate = DateTimeOffset.Now.AddYears(-30),
+            //         HireDate = DateTimeOffset.Now,
+            //         Address = "123 Main St",
+            //         City = "Anytown",
+            //         Region = "CA",
+            //         PostalCode = "12345",
+            //         Country = "USA",
+            //         HomePhone = "555-1234",
+            //         Extension = "123",
+            //         Notes = "New employee",
+            //         PhotoPath = "/photos/johndoe.jpg"
+
+            //     });
+            // employees = await employeesRequestBuilder.GetAsync();
+
+            //var customRequestBuilder = new CustomRequestBuilder($"me/drive/items/{itemId}", graphClient.RequestAdapter);
+            //var driveItem = await customRequestBuilder.GetAsync(DriveItem.CreateFromDiscriminatorValue, rc =>
+            //{
+            //    rc.QueryParameters.Select = ["id", "name"];
+            //    rc.QueryParameters.Expand = ["versions"];
+            //});
+            //https://localhost:5000/odata/Employees?%24top=50
+            var employeesFitered = await employeesRequestBuilder.WithUrl("https://localhost:5000/odata/Employees?$top=1").GetAsync();
+            var test = await employeesRequestBuilder.GetAsync(rc =>
+            {
+                rc.QueryParameters.Filter = "lastName eq 'Doe'";
+            });
+
+            var e = test.Value;
+            Console.WriteLine($"Retrieved {employees.Value?.Count} employees.");
+            //https://martin-machacek.com/blogPost/fb5a9e4e-c49f-4de7-b32b-46f18f6fb85e.........
+        }catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+}

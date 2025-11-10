@@ -1,0 +1,35 @@
+﻿@page "/test"
+
+@using MudBlazor.Northwind.Components
+@using Shared.Models.Data
+
+
+
+<PageTitle>Index</PageTitle>
+
+<FormMud Entity="Product" OnSaved="Save" />
+
+@code {
+    private Product? Product { get; set; }
+
+    private async Task Save()
+    {
+        var t = Product.Price.ToString();
+        var d = Product.LaunchDate;
+        Console.WriteLine(t);
+    }
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        Product = new Product()
+        {
+            LaunchDate = DateTime.Now,
+            Name = "Apple",
+            Description = "Green or red",
+            Type = ProductType.Standard,
+            Price = 2.5m,
+            HasSubscription = false
+        };
+    }
+}

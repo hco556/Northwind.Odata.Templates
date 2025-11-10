@@ -1,4 +1,4 @@
-using FluentValidation;
+﻿using FluentValidation;
 using Northwind.Shared.Constants;
 using Northwind.Shared.Employees.Commands;
 
@@ -22,5 +22,9 @@ public class AddOrUpdateEmployeeValidator : AbstractValidator<AddOrUpdateEmploye
             .WithMessage("The title is required")
             .MaximumLength(MaxLengths.Employees.Title)
             .WithMessage("The title must be less than {MaxLength} characters");
+
+        RuleFor(x => x.Password).NotEmpty()
+            .Matches(@"^(?=(.*[A-Z]){2,})(?=(.*[a-z]){2,})(?=(.*[^A-Za-z0-9]){2,}).{12,}$")
+            .WithMessage("Password must be at least 12 characters long and contain at least 2 uppercase, 2 lowercase and 2 special characters.");
     }
 }

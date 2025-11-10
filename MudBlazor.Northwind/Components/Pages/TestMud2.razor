@@ -1,0 +1,147 @@
+﻿@page "/testmud2"
+@using System.Reflection
+@using Microsoft.Kiota.Abstractions.Authentication
+@using Microsoft.Kiota.Http.HttpClientLibrary
+@using System.ComponentModel
+@using global::Northwind.Odata.Api.Client
+@using global::Northwind.Odata.Api.Client.Models
+@using global::Northwind.Odata.Api.Client.Odata.Employees
+<h3>TestMud</h3>
+
+    
+<MudPaper Class="pa-4" Elevation="4">
+    <MudForm @ref="form" Model="@employee">
+       @foreach (var property in Properties)
+        {
+            PropertyInfo? Property = property;
+            object? PropertyValue = Property?.GetValue(employee);
+            string label = Property?.GetDisplayName();
+            Type? PropertyType = Property?.PropertyType;
+  
+        }
+      
+        <MudButton OnClick="SubmitForm">Submit</MudButton>
+    </MudForm>
+
+</MudPaper>
+        @if (success)
+        {
+            <MudAlert Severity="Severity.Success">Form submitted successfully!</MudAlert>
+    }
+   
+@code {
+    private List<PropertyInfo> Properties { get; set; } = new();
+   // private Product? Product { get; set; }
+    private IAuthenticationProvider authProvider;
+    // Create request adapter using the HttpClient-based implementation
+    private HttpClientRequestAdapter adapter;
+    // Create the API client
+    private NorthwindClient client;
+    private Employee employee;
+    private MudForm form;
+    private bool success;
+    private string[] errors;
+    private async Task SubmitForm()
+    {
+        try
+        {
+            EmployeesRequestBuilder employeesRequestBuilder = client.Odata.Employees;
+            var resp = await employeesRequestBuilder.PostAsync(employee);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        Properties = typeof(Employee).GetProperties()
+            .Where(p => Attribute.IsDefined(p, typeof(DisplayNameAttribute)))
+            .ToList();
+        // Product = new Product()
+        // {
+        //     Name = "Apple",
+        //     Description = "Green or red",
+        //     Type = ProductType.Standard,
+        //     Price = 2.5m,
+        //     HasSubscription = false
+        // };
+        authProvider = new AnonymousAuthenticationProvider();
+    // Create request adapter using the HttpClient-based implementation
+    adapter = new HttpClientRequestAdapter(authProvider);
+    // Create the API client
+    client = new NorthwindClient(adapter);
+        employee = new Employee
+        {
+            FirstName = "John",
+            LastName = "Doe",
+            Title = "Software Engineer",
+            TitleOfCourtesy = "Mr.",
+            BirthDate = DateTimeOffset.Now.AddYears(-30),
+            HireDate = DateTimeOffset.Now,
+            Address = "123 Main St",
+            City = "Anytown",
+            Region = "CA",
+            PostalCode = "12345",
+            Country = "USA",
+            HomePhone = "555-1234",
+            Extension = "123",
+            Notes = "New employee",
+            PhotoPath = "/photos/johndoe.jpg"
+
+        };
+        // API requires no authentication, so use the anonymous
+        // authentication provider
+
+
+        try
+        {
+
+            EmployeesRequestBuilder employeesRequestBuilder = client.Odata.Employees;
+            var employees = await employeesRequestBuilder.GetAsync();
+
+            Console.WriteLine($"Retrieved {employees.Value?.Count} employees.");
+            // var resp = await employeesRequestBuilder.PostAsync(new Employee
+            //     {
+            //         FirstName = "John",
+            //         LastName = "Doe",
+            //         Title = "Software Engineer",
+            //         TitleOfCourtesy = "Mr.",
+            //         BirthDate = DateTimeOffset.Now.AddYears(-30),
+            //         HireDate = DateTimeOffset.Now,
+            //         Address = "123 Main St",
+            //         City = "Anytown",
+            //         Region = "CA",
+            //         PostalCode = "12345",
+            //         Country = "USA",
+            //         HomePhone = "555-1234",
+            //         Extension = "123",
+            //         Notes = "New employee",
+            //         PhotoPath = "/photos/johndoe.jpg"
+
+            //     });
+            // employees = await employeesRequestBuilder.GetAsync();
+
+            //var customRequestBuilder = new CustomRequestBuilder($"me/drive/items/{itemId}", graphClient.RequestAdapter);
+            //var driveItem = await customRequestBuilder.GetAsync(DriveItem.CreateFromDiscriminatorValue, rc =>
+            //{
+            //    rc.QueryParameters.Select = ["id", "name"];
+            //    rc.QueryParameters.Expand = ["versions"];
+            //});
+            //https://localhost:5000/odata/Employees?%24top=50
+            var employeesFitered = await employeesRequestBuilder.WithUrl("https://localhost:5000/odata/Employees?$top=1").GetAsync();
+            var test = await employeesRequestBuilder.GetAsync(rc =>
+            {
+                rc.QueryParameters.Filter = "lastName eq 'Doe'";
+            });
+
+            var e = test.Value;
+            Console.WriteLine($"Retrieved {employees.Value?.Count} employees.");
+            //https://martin-machacek.com/blogPost/fb5a9e4e-c49f-4de7-b32b-46f18f6fb85e.........
+        }catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+}

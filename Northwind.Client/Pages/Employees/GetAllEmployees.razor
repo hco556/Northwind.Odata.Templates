@@ -65,7 +65,7 @@ else
 		// Simulate asynchronous loading to demonstrate a loading indicator
 		//await Task.Delay(500);
 
-		_employees ??= await HttpClient.GetFromJsonAsync<List<EmployeesDto>>(Routes.Api.Employees.GetAll);
+		//_employees ??= await HttpClient.GetFromJsonAsync<List<EmployeesDto>>(Routes.Api.Employees.GetAll);
 	}
 
 	private void GoToEditPage(EmployeesDto employees)

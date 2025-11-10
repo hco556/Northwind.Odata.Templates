@@ -1,4 +1,4 @@
-namespace Northwind.Shared.Employees.Commands;
+﻿namespace Northwind.Shared.Employees.Commands;
 
 public class AddOrUpdateEmployeeCommand
 {
@@ -6,4 +6,5 @@ public class AddOrUpdateEmployeeCommand
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;
     public string Title { get; set; } = null!;
+    public string Password { get; set; } = null!;
 }

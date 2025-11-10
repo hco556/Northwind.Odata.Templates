@@ -1,0 +1,232 @@
+<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Reflection" #>
+<#@ import namespace="System.ComponentModel" #>
+<#@ output extension=".razor" #>
+<#
+    var employee = new Employee();
+    var Properties = typeof(Employee).GetProperties()
+            .Where(p => Attribute.IsDefined(p, typeof(DisplayNameAttribute)))
+            .ToList();
+    var propertySets = new List<propertySet>();
+       foreach (var property in Properties)
+        {
+            PropertyInfo Property = property;
+            object PropertyValue = Property?.GetValue(employee);
+            string label = Property?.GetDisplayName();
+            Type PropertyType = Property?.PropertyType;
+            var propertySet = new PropertySet()
+            propertySets.Add(propertySet);
+    };
+
+
+#>
+@page "/testmud3"
+@using System.Reflection
+@using Microsoft.Kiota.Abstractions.Authentication
+@using Microsoft.Kiota.Http.HttpClientLibrary
+@using System.ComponentModel
+@using global::Northwind.Odata.Api.Client
+@using global::Northwind.Odata.Api.Client.Models
+@using global::Northwind.Odata.Api.Client.Odata.Employees
+<h3>TestMud</h3>
+
+    
+<MudPaper Class="pa-4" Elevation="4">
+    <MudForm @ref="form" Model="@employee">
+
+            <MudTextField @bind-Value="employee.<#= propertySet.PropertyName #>" Label="<#= propertySet.PropertyLabel #>" Required="<#= propertySet.PropertyIsRequired #>" />
+      
+        <# foreach(var propertySet in propertySets) { #>
+
+             <MudTextField @bind-Value="employee.FirstName" Label="First Name" Required="true" />
+   <# } #>
+   
+        <MudButton OnClick="SubmitForm">Submit</MudButton>
+    </MudForm>
+
+</MudPaper>
+        @if (success)
+        {
+            <MudAlert Severity="Severity.Success">Form submitted successfully!</MudAlert>
+    }
+
+
+@code {
+    private List<PropertyInfo> Properties { get; set; } = new();
+   // private Product? Product { get; set; }
+    private IAuthenticationProvider authProvider;
+    // Create request adapter using the HttpClient-based implementation
+    private HttpClientRequestAdapter adapter;
+    // Create the API client
+    private NorthwindClient client;
+    private Employee employee;
+    private MudForm form;
+    private bool success;
+    private string[] errors;
+    private async Task SubmitForm()
+    {
+        try
+        {
+            EmployeesRequestBuilder employeesRequestBuilder = client.Odata.Employees;
+            var resp = await employeesRequestBuilder.PostAsync(employee);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        Properties = typeof(Employee).GetProperties()
+            .Where(p => Attribute.IsDefined(p, typeof(DisplayNameAttribute)))
+            .ToList();
+        // Product = new Product()
+        // {
+        //     Name = "Apple",
+        //     Description = "Green or red",
+        //     Type = ProductType.Standard,
+        //     Price = 2.5m,
+        //     HasSubscription = false
+        // };
+        authProvider = new AnonymousAuthenticationProvider();
+    // Create request adapter using the HttpClient-based implementation
+    adapter = new HttpClientRequestAdapter(authProvider);
+    // Create the API client
+    client = new NorthwindClient(adapter);
+        employee = new Employee
+        {
+            FirstName = "John",
+            LastName = "Doe",
+            Title = "Software Engineer",
+            TitleOfCourtesy = "Mr.",
+            BirthDate = DateTimeOffset.Now.AddYears(-30),
+            HireDate = DateTimeOffset.Now,
+            Address = "123 Main St",
+            City = "Anytown",
+            Region = "CA",
+            PostalCode = "12345",
+            Country = "USA",
+            HomePhone = "555-1234",
+            Extension = "123",
+            Notes = "New employee",
+            PhotoPath = "/photos/johndoe.jpg"
+
+        };
+        // API requires no authentication, so use the anonymous
+        // authentication provider
+
+
+        try
+        {
+
+            EmployeesRequestBuilder employeesRequestBuilder = client.Odata.Employees;
+            var employees = await employeesRequestBuilder.GetAsync();
+
+            Console.WriteLine($"Retrieved {employees.Value?.Count} employees.");
+            // var resp = await employeesRequestBuilder.PostAsync(new Employee
+            //     {
+            //         FirstName = "John",
+            //         LastName = "Doe",
+            //         Title = "Software Engineer",
+            //         TitleOfCourtesy = "Mr.",
+            //         BirthDate = DateTimeOffset.Now.AddYears(-30),
+            //         HireDate = DateTimeOffset.Now,
+            //         Address = "123 Main St",
+            //         City = "Anytown",
+            //         Region = "CA",
+            //         PostalCode = "12345",
+            //         Country = "USA",
+            //         HomePhone = "555-1234",
+            //         Extension = "123",
+            //         Notes = "New employee",
+            //         PhotoPath = "/photos/johndoe.jpg"
+
+            //     });
+            // employees = await employeesRequestBuilder.GetAsync();
+
+            //var customRequestBuilder = new CustomRequestBuilder($"me/drive/items/{itemId}", graphClient.RequestAdapter);
+            //var driveItem = await customRequestBuilder.GetAsync(DriveItem.CreateFromDiscriminatorValue, rc =>
+            //{
+            //    rc.QueryParameters.Select = ["id", "name"];
+            //    rc.QueryParameters.Expand = ["versions"];
+            //});
+            //https://localhost:5000/odata/Employees?%24top=50
+            var employeesFitered = await employeesRequestBuilder.WithUrl("https://localhost:5000/odata/Employees?$top=1").GetAsync();
+            var test = await employeesRequestBuilder.GetAsync(rc =>
+            {
+                rc.QueryParameters.Filter = "lastName eq 'Doe'";
+            });
+
+            var e = test.Value;
+            Console.WriteLine($"Retrieved {employees.Value?.Count} employees.");
+            //https://martin-machacek.com/blogPost/fb5a9e4e-c49f-4de7-b32b-46f18f6fb85e.........
+        }catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+}
+
+
+<#+
+	public class PropertySet 
+    {
+        public readonly string PropertyName;
+        public readonly Type PropertyType;
+        public readonly string PropertyLabel;
+        public readonly bool PropertyIsRequired;
+        
+        public PropertySet (string propertyName, Type propertyType, string propertyLabel, string propertyIsRequired) 
+        {
+            PropertyName = propertyName;
+            PropertyType = propertyType;
+            PropertyLabel = propertyLabel;
+            PropertyIsRequired = propertyIsRequired;
+        }
+    }
+    public  class Employee
+{
+    public int EmployeeId { get; set; }
+
+    public string LastName { get; set; } = null!;
+
+    public string FirstName { get; set; } = null!;
+
+    public string? Title { get; set; }
+
+    public string? TitleOfCourtesy { get; set; }
+
+    public DateTime? BirthDate { get; set; }
+
+    public DateTime? HireDate { get; set; }
+
+    public string? Address { get; set; }
+
+    public string? City { get; set; }
+
+    public string? Region { get; set; }
+
+    public string? PostalCode { get; set; }
+
+    public string? Country { get; set; }
+
+    public string? HomePhone { get; set; }
+
+    public string? Extension { get; set; }
+
+    public byte[]? Photo { get; set; }
+
+    public string? Notes { get; set; }
+
+    public int? ReportsTo { get; set; }
+
+    public string? PhotoPath { get; set; }
+
+ 
+}
+#>
