@@ -1,4 +1,5 @@
-﻿using OdataClientModels = Northwind.Odata.Api.Client.Models;
+﻿using MudBlazor.Northwind.Shared.ViewModels;
+using OdataClientModels = Northwind.Odata.Api.Client.Models;
 
 namespace MudBlazor.Northwind.Mappers.Order
 {

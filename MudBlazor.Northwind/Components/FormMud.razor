@@ -6,9 +6,10 @@
 @using MudBlazor.Northwind.Data
 @using System.ComponentModel.DataAnnotations
 
-<MudForm Model="Entity">
+<MudForm Model="@Entity">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
 
-    <MudForm Model="@Entity">
         @foreach (var property in Properties)
         {
             <FormFieldMud Property="property" Entity="Entity" />
@@ -16,7 +17,7 @@
       <MudButton  OnClick="OnSubmit">Save</MudButton>
 @* 
         <MudButton OnClick="SubmitForm">Submit</MudButton> *@
-    </MudForm>
+
 </MudForm>
 
 @code {

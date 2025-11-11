@@ -65,8 +65,21 @@ foreach (var property in Properties)
 
   
     propertySets.Add(propertySet);
-}
-;
+};
+
+//var rt = new RuntimeTextTemplate
+//{
+//    Session = new Dictionary<string, object>()
+//};
+//rt.Session["Count"] = 7;
+//rt.Initialize();
+//Console.WriteLine(rt.TransformText());
+var contentsEmployee = File.ReadAllText("C:\\Users\\hcopp\\Documents\\Work\\OData\\Northwind.OData.Templates\\MudBlazor.Northwind\\ViewModels\\EmployeeViewModel.cs");
+var contentsOrder = File.ReadAllText("C:\\Users\\hcopp\\Documents\\Work\\OData\\Northwind.OData.Templates\\MudBlazor.Northwind\\ViewModels\\EmployeeViewModel.cs");
+string path = "C:\\Users\\hcopp\\Documents\\Work\\OData\\Northwind.OData.Templates\\MudBlazor.Northwind\\MyFile.tt";
+string textToAppend = "This is new content.\n";
+
+File.AppendAllText(path, textToAppend);
 var authProvider = new AnonymousAuthenticationProvider();
 
 // Create request adapter using the HttpClient-based implementation

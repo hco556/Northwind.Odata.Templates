@@ -32,6 +32,10 @@
 
 
   <ItemGroup>
+    <T4Runtime Include="RuntimeTextTemplate.tt">
+      <Generator>MsBuild:Compile</Generator>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </T4Runtime>
     <None Update="MyFile.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>MyFile.txt</LastGenOutput>
@@ -49,6 +53,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>MudFormTemplate.tt</DependentUpon>
     </None>
+    <None Update="T4\RuntimeTextTemplate.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>RuntimeTextTemplate.cs</LastGenOutput>
+    </None>
     <None Update="T4\TextTemplate.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TextTemplate.txt</LastGenOutput>
@@ -60,10 +68,6 @@
     </None>
   </ItemGroup>
 
-
-  <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
 
 
   <ItemGroup>
@@ -86,5 +90,15 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>MudFormTemplate.tt</DependentUpon>
     </Compile>
+    <Compile Update="T4\RuntimeTextTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RuntimeTextTemplate.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 </Project>

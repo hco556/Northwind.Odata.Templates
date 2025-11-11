@@ -14,6 +14,14 @@
         if (formType == FormControlType.Datetime)
         {
             <MudDatePicker Class="form-control" Date="@((DateTime)PropertyValue!)"/>
+
+            <MudDatePicker Date="@((DateTime)PropertyValue!)"
+                           DateChanged="(DateTime? val) => Property.SetValue(Entity, val)"
+                           MaxDate="@(DateTime.Today)" Label="Hire Date, Not working days, Sunday in red"
+                           IsDateDisabledFunc="@((DateTime dt)=>((int)dt.DayOfWeek > 0 && (int)dt.DayOfWeek < 6))"
+                           AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))"
+                           Mask="@(new DateMask("dd/MM/yyyy"))" DateFormat="dd/MM/yyyy" Placeholder="de-AT Date" Variant="Variant.Text" PickerVariant="PickerVariant.Dialog" Clearable="true" />
+
         }
         else
         if (formType == FormControlType.Textarea)

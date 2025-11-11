@@ -1,4 +1,4 @@
-﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ import namespace="System" #>
 <#@ assembly name="Shared.Models.dll" #>
 <#@ import namespace="System.Text" #>
@@ -6,4 +6,5 @@
 <#@ import namespace="System.Reflection" #>
 <#@ import namespace="Shared.Models" #>
 <#@ output extension=".txt" #>
+
 

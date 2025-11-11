@@ -17,22 +17,32 @@
 <FormMud Entity="EmployeeViewModel" OnSaved="Save" />
 
 @code {
-    private EmployeeViewModel? EmployeeViewModel { get; set; } = new();
+    private EmployeeViewModel EmployeeViewModel { get; set; } = new();
 
     private async Task Save()
     {
- 
-           Console.WriteLine("Save");
+        if (EmployeeViewModel == null)
+            Console.WriteLine("EmployeeViewModel is null");
+      var  Properties = typeof(EmployeeViewModel).GetProperties()
+         .Where(p => Attribute.IsDefined(p, typeof(DisplayNameAttribute)))
+         .ToList();
+                @foreach (var property in Properties)
+                {
+                    PropertyInfo? Property = property;
+                    object? PropertyValue = Property?.GetValue(EmployeeViewModel);
+                    string label = Property?.GetDisplayName();
+                    Type? PropertyType = Property?.PropertyType;
+
+        }
+
     }
     protected override async Task OnInitializedAsync()
     {
         int Id = 1;
-        EmployeeViewModel = await kiotaRequestBuilder.GetEmployeeById(Id);
+        EmployeeViewModel? respVw = await kiotaRequestBuilder.GetEmployeeById(Id);
 
-        EmployeeViewModel ??= new EmployeeViewModel()
-        {
+        EmployeeViewModel = (respVw != null) ? (EmployeeViewModel)respVw : new EmployeeViewModel();
 
-        };
      //  var _managers = (await kiotaRequestBuilder.GetAllEmployees()).Where(e => e.EmployeeId != Model.EmployeeId).ToList();
         // if (_orders.Count == 0)
         // {

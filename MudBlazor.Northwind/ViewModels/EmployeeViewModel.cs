@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 
 namespace MudBlazor.Northwind.Shared.ViewModels;
-
+//Start-Template//
 public class EmployeeViewModel
 {
     [DisplayName("Employee Id")]
@@ -86,3 +86,4 @@ public class EmployeeViewModel
         return  FirstName + " " + LastName;
     }
 }
+//End-Template//

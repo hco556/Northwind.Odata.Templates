@@ -1,5 +1,5 @@
-﻿namespace MudBlazor.Northwind;
-
+﻿namespace MudBlazor.Northwind.Shared.ViewModels;
+//Start-Template//
 public class OrderViewModel
 {
     public int OrderId { get; set; }
@@ -42,3 +42,4 @@ public class OrderViewModel
         return OrderId + ": Customer " + CustomerId + " - Order Date: " + OrderDate?.ToString("dd/MM/yyyy");
     }
 }
+//End-Template//
