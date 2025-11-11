@@ -1,8 +1,9 @@
-﻿using Shared.Models.Attributes;
+﻿using Northwind.Templates.Attributes;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Shared.Models.Data
+namespace Northwind.Templates.Data
 {
     public class Product
     {

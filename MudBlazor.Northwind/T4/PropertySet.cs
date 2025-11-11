@@ -1,6 +1,6 @@
-﻿using Shared.Models.Data;
+﻿using MudBlazor.Northwind.Data;
 
-namespace Northwind.Odata.Api.Models
+namespace MudBlazor.Northwind.T4
 {
     public class PropertySet
     {

@@ -2,8 +2,8 @@
 
 @using System.Linq.Expressions
 @using System.Reflection
-@using Shared.Models.Attributes
-@using Shared.Models.Data
+@using MudBlazor.Northwind.Attributes
+@using MudBlazor.Northwind.Data
 
 
 @if (Property != null)
@@ -126,5 +126,23 @@
         var constant = Expression.Constant(Entity);
         var exp = Expression.Property(constant, Property!.Name);
         return Expression.Lambda<Func<PropertyType>>(exp);
+    }
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        return base.SetParametersAsync(parameters);
+
+        //     foreach (var property in Properties)
+        //     {
+        //         PropertyInfo Property = property;
+        //         object PropertyValue = Property?.GetValue(TEntity);
+        //         string label = Property?.GetDisplayName();
+        //         Type PropertyType = Property?.PropertyType;
+        //         FormControlAttribute? formControlAttribute = Property.GetAttribute<FormControlAttribute>();
+        //         var formControlType = FormControlType.Text;
+        //         var isDisabled = !Attribute.IsDefined(property, typeof(ReadOnlyAttribute));
+        //         var isRequired = Attribute.IsDefined(property, typeof(RequiredAttribute));
+        //         var hasCustomQuery = formControlAttribute.CustomQuery.Length > 0;
+
+        // }
     }
 }

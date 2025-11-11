@@ -1,22 +1,15 @@
 <#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ assembly name="System.Core" #>
-<#@ assembly name="C:\Users\hcopp\Documents\Work\OData\Northwind.OData.Templates\MudBlazor.Northwind\bin\Debug\Shared.Models.dll" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Text.RegularExpressions" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Reflection" #>
-<#@ import namespace="System.ComponentModel" #>
-<#@ import namespace="System.ComponentModel.DataAnnotations" #>
-<#@ import namespace="Shared.Models" #>
-<#@ import namespace="Shared.Models.Shared.ViewModels" #>
-<#@ import namespace="Shared.Models.Attributes" #>
-<#@ import namespace="Shared.Models.Data" #>
-
+<#@ include file="Models.ttinclude" once="true" #><##>
 
 <#@ output extension=".txt" #>
 <#
-    var employee = new EmployeeViewModel(); 
+    var employee = new Employee(); 
      
 
 #>
@@ -30,8 +23,3 @@
 @using global::Northwind.Odata.Api.Client.Odata.Employees
 
 
-
-<#+
-
-
-#>

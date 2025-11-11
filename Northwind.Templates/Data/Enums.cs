@@ -1,4 +1,4 @@
-﻿namespace Shared.Models.Data
+﻿namespace Northwind.Templates.Data
 {
     public enum ProductType
     {

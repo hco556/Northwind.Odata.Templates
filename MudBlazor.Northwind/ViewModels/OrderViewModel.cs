@@ -1,6 +1,4 @@
-﻿using Shared.Models.Shared.ViewModels;
-
-namespace Shared.Models;
+﻿namespace MudBlazor.Northwind;
 
 public class OrderViewModel
 {

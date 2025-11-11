@@ -1,9 +1,9 @@
-﻿using Shared.Models.Attributes;
-using Shared.Models.Data;
+﻿using MudBlazor.Northwind.Attributes;
+using MudBlazor.Northwind.Data;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Shared.Models.Shared.ViewModels
+namespace MudBlazor.Northwind.Shared.ViewModels
 {
     public class ProductViewModel
     {

@@ -119,10 +119,6 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>EntitiesRepository.cs</LastGenOutput>
     </None>
-    <None Update="T4\Test1.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Test1.cs</LastGenOutput>
-    </None>
   </ItemGroup>
 
 </Project>

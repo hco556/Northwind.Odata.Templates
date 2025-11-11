@@ -1,12 +1,13 @@
 ﻿
-using Shared.Models.Shared.ViewModels;
+using MudBlazor.Northwind.Mappers.Order;
+using MudBlazor.Northwind.Shared.ViewModels;
 using OdataClientModels = Northwind.Odata.Api.Client.Models;
 
 namespace MudBlazor.Northwind.Mappers.Employee
 {
     public static class EmployeeMapper
     {
-        public static List<EmployeeViewModel> MapEmployeesToViewModels(List<OdataClientModels.Employee> employees)
+        public static List<EmployeeViewModel?> MapEmployeesToViewModels(List<OdataClientModels.Employee> employees)
         {
             if (employees is null) throw new ArgumentNullException(nameof(employees));
 
@@ -21,7 +22,7 @@ namespace MudBlazor.Northwind.Mappers.Employee
 
             return result;
         }
-        public static EmployeeViewModel? MapEmployeeToViewModel(OdataClientModels.Employee employee)
+        public static EmployeeViewModel? MapEmployeeToViewModel(OdataClientModels.Employee? employee)
         {
             if (employee is null) return null;
 
@@ -52,6 +53,7 @@ namespace MudBlazor.Northwind.Mappers.Employee
                 //    ? new List<Order>(employee.Orders)
                 //    : new List<Order>(),
                 ReportsToEmployee = MapEmployeeToViewModel(employee.ReportsToNavigation),
+                Orders = OrderMapper.MapOrdersToViewModels(employee.Orders)
                 //Territories = employee.Territories != null
                 //    ? new List<Territory>(employee.Territories)
                 //    : new List<Territory>()

@@ -2,6 +2,9 @@
 
 @using System.Reflection
 @using System.ComponentModel
+@using MudBlazor.Northwind.Attributes
+@using MudBlazor.Northwind.Data
+@using System.ComponentModel.DataAnnotations
 
 <MudForm Model="Entity">
 
@@ -28,8 +31,11 @@
     protected override void OnInitialized()
     {
         Properties = typeof(TEntity).GetProperties()
-            .Where(p => Attribute.IsDefined(p, typeof(DisplayNameAttribute)))
-            .ToList();
+           .Where(p => Attribute.IsDefined(p, typeof(DisplayNameAttribute)))
+           .ToList();
+
+   
+        
     }
 
     private async Task OnSubmit()

@@ -1,0 +1,20 @@
+﻿<#+
+
+	public class EntitySet 
+    {
+        public readonly string EntityName;
+        public readonly string EntityKeyName;
+        public readonly string EntityKeyType;
+        public readonly string EntitySetName;
+        
+        public EntitySet (string entitySetName, string entityName, string entityKeyName, string entityKeyType) 
+        {
+            EntitySetName = entitySetName;
+            EntityName = entityName;
+            EntityKeyName = entityKeyName;
+            EntityKeyType = entityKeyType;
+
+        }
+    } 
+
+#>

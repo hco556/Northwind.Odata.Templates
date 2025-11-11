@@ -1,6 +1,7 @@
-﻿using Shared.Models.Data;
+﻿using Northwind.Templates.Data;
+using System;
 
-namespace Shared.Models.Attributes
+namespace Northwind.Templates.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class FormControlAttribute : Attribute

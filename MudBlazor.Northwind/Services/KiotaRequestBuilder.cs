@@ -1,10 +1,11 @@
 ﻿using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
+using MudBlazor.Northwind.Constants;
 using MudBlazor.Northwind.Mappers.Employee;
+using MudBlazor.Northwind.Shared.ViewModels;
 using Northwind.Odata.Api.Client;
-using Northwind.Odata.Api.Client.Models;
 using Northwind.Odata.Api.Client.Odata.Employees;
-using Shared.Models.Shared.ViewModels;
+using OdataClientModels = Northwind.Odata.Api.Client.Models;
 
 
 namespace MudBlazor.Northwind.Services
@@ -22,12 +23,58 @@ namespace MudBlazor.Northwind.Services
             _client = client;
        
         }
+        public async Task<EmployeeViewModel?> GetEmployeeByCustomQuery(string query)
+        {
+     
+            EmployeesRequestBuilder employeesRequestBuilder = _client.Odata.Employees;
+            //https://localhost:5000/odata/Employees?%24top=1
+            // var employee = await employeesRequestBuilder.WithUrl(ConstantCalls.BaseUrl + query).GetAsync();
+            OdataClientModels.Employee? employee = null;
+            EmployeeViewModel? employeeViewModel = new EmployeeViewModel();
+            var employeeCollectionResponse = await employeesRequestBuilder.GetAsync(rc =>
+            {
+                rc.QueryParameters.Filter = $"{query}";
+            });
+
+            if (employeeCollectionResponse != null)
+            {
+                employee = employeeCollectionResponse.Value?.FirstOrDefault();
+            }
+            if (employeeViewModel != null)
+            {
+                employeeViewModel = EmployeeMapper.MapEmployeeToViewModel(employee);
+                return employeeViewModel;
+            }
+            return null;
+        }
+        public async Task<EmployeeViewModel?> GetEmployeeById(int Id)
+        {
+            EmployeesRequestBuilder employeesRequestBuilder = _client.Odata.Employees;
+            var employeeCollectionResponse = await employeesRequestBuilder.GetAsync(rc =>
+            {
+                rc.QueryParameters.Filter = $"EmployeeId eq {Id}";
+            });
+            //  var employee = await _client.Odata.Employees[Id].GetAsync();
+            //  return EmployeeMapper.MapEmployeeToViewModel(employee); ;
+            OdataClientModels.Employee? employee = new();
+            if (employeeCollectionResponse != null)
+            {
+                employee = employeeCollectionResponse.Value?.FirstOrDefault();
+            }
+            if (employee != null)
+            {
+                EmployeeViewModel? employeeViewModel = EmployeeMapper.MapEmployeeToViewModel(employee);
+                return employeeViewModel;
+            }
+            return null;
+
+        }
         public async Task<EmployeeViewModel?> GetEmployeeByName(string lastName)
         {
-            Employee employee = null;
+           
             EmployeesRequestBuilder employeesRequestBuilder = _client.Odata.Employees;
             //https://localhost:5000/odata/Employees?%24top=50
-            var employeesFitered = await employeesRequestBuilder.WithUrl("https://localhost:5000/odata/Employees?$top=1").GetAsync();
+        //    var employeesFitered = await employeesRequestBuilder.WithUrl(ConstantCalls.BaseUrl + "Employees?$top=1").GetAsync();
 
             
 
@@ -35,14 +82,14 @@ namespace MudBlazor.Northwind.Services
             {
                 rc.QueryParameters.Filter = $"lastName eq '{lastName}'";
             });
-
+            OdataClientModels.Employee? employee = new();
             if (employeeCollectionResponse != null)
             {
-                employee = employeeCollectionResponse.Value.FirstOrDefault();
+                employee = employeeCollectionResponse.Value?.FirstOrDefault();
             }
             if (employee != null)
             {
-                EmployeeViewModel employeeViewModel = EmployeeMapper.MapEmployeeToViewModel(employee);
+                EmployeeViewModel? employeeViewModel = EmployeeMapper.MapEmployeeToViewModel(employee);
                 return employeeViewModel;
             }
             return null;

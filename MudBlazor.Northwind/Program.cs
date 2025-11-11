@@ -4,15 +4,15 @@ using Microsoft.Kiota.Http.HttpClientLibrary;
 using MudBlazor;
 using MudBlazor.Extensions;
 using MudBlazor.Northwind;
+using MudBlazor.Northwind.Attributes;
 using MudBlazor.Northwind.Components;
+using MudBlazor.Northwind.Data;
 using MudBlazor.Northwind.Services;
+using MudBlazor.Northwind.Shared.ViewModels;
+using MudBlazor.Northwind.T4;
 using MudBlazor.Services;
 using Northwind.Odata.Api.Client;
-using Northwind.Odata.Api.Models;
-using Shared.Models;
-using Shared.Models.Attributes;
-using Shared.Models.Data;
-using Shared.Models.Shared.ViewModels;
+
 using System.ComponentModel;
 using System.Diagnostics.Eventing.Reader;
 using System.Reflection;
@@ -37,6 +37,7 @@ builder.Services.AddHttpClient<ApiService>("apiclient",client =>
     client.BaseAddress = new Uri("https://localhost:5000");
 
 });
+String line;
 
 var employee = new EmployeeViewModel();
 var Properties = typeof(EmployeeViewModel).GetProperties()
@@ -56,8 +57,8 @@ foreach (var property in Properties)
     if (formControlAttribute != null)
     {
         formControlType = formControlAttribute.Type;
-        isRequired = formControlAttribute.IsRequired;
-        isDisabled = formControlAttribute.IsDisabled;
+        //isRequired = formControlAttribute.IsRequired;
+        //isDisabled = formControlAttribute.IsDisabled;
     }
 
     var propertySet = new PropertySet(property.Name, PropertyType, formControlType, label, isRequired, isDisabled);

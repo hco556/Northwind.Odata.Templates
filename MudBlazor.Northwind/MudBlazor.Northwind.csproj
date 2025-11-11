@@ -4,12 +4,22 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>MudBlazor.Northwind</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="MyFile.txt">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MyFile.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
 
 
   <ItemGroup>
     <PackageReference Include="Blazored.FluentValidation" Version="2.2.0" />
     <PackageReference Include="FluentValidation" Version="12.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" />
     <PackageReference Include="MudBlazor" Version="8.*" />
     <PackageReference Include="MudBlazor.Extensions" Version="8.14.0" />
   </ItemGroup>
@@ -22,14 +32,31 @@
 
 
   <ItemGroup>
-    <None Update="Components\Pages\MudFormTemplate.tt">
+    <None Update="MyFile.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MyFile.txt</LastGenOutput>
+    </None>
+    <None Update="T4\EntitiesRepository.tt">
+      <LastGenOutput>EntitiesRepository.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="T4\MudFormTemplate.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>MudFormTemplate.txt</LastGenOutput>
     </None>
-    <None Update="Components\Pages\MudFormTemplate.txt">
+    <None Update="T4\MudFormTemplate.txt">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>MudFormTemplate.tt</DependentUpon>
+    </None>
+    <None Update="T4\TextTemplate.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TextTemplate.txt</LastGenOutput>
+    </None>
+    <None Update="T4\TextTemplate.txt">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TextTemplate.tt</DependentUpon>
     </None>
   </ItemGroup>
 
@@ -41,7 +68,15 @@
 
   <ItemGroup>
     <Folder Include="Components\Employees\" />
-    <Folder Include="Shared\" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
+    <None Include="MyFile.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MyFile.tt</DependentUpon>
+    </None>
   </ItemGroup>
 
 

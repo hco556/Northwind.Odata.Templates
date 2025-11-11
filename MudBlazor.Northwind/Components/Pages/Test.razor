@@ -1,35 +1,55 @@
 ﻿@page "/test"
-
+@inject Services.KiotaRequestBuilder kiotaRequestBuilder
 @using MudBlazor.Northwind.Components
-@using Shared.Models.Data
+@using MudBlazor.Northwind.T4
+@using MudBlazor.Northwind
+@using MudBlazor.Northwind.Attributes
+@using MudBlazor.Northwind.Data
+@using MudBlazor.Northwind.Shared.ViewModels
+@using System.ComponentModel
+@using System.Reflection
+@using System.ComponentModel.DataAnnotations
 
 
 
 <PageTitle>Index</PageTitle>
 
-<FormMud Entity="Product" OnSaved="Save" />
+<FormMud Entity="EmployeeViewModel" OnSaved="Save" />
 
 @code {
-    private Product? Product { get; set; }
+    private EmployeeViewModel? EmployeeViewModel { get; set; } = new();
 
     private async Task Save()
     {
-        var t = Product.Price.ToString();
-        var d = Product.LaunchDate;
-        Console.WriteLine(t);
+ 
+           Console.WriteLine("Save");
     }
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
+        int Id = 1;
+        EmployeeViewModel = await kiotaRequestBuilder.GetEmployeeById(Id);
 
-        Product = new Product()
+        EmployeeViewModel ??= new EmployeeViewModel()
         {
-            LaunchDate = DateTime.Now,
-            Name = "Apple",
-            Description = "Green or red",
-            Type = ProductType.Standard,
-            Price = 2.5m,
-            HasSubscription = false
+
         };
+     //  var _managers = (await kiotaRequestBuilder.GetAllEmployees()).Where(e => e.EmployeeId != Model.EmployeeId).ToList();
+        // if (_orders.Count == 0)
+        // {
+        //     _orders.Add(new OrderViewModel { CustomerId = "Customer1", EmployeeId = null, OrderDate = DateTime.Now, OrderId = 1 });
+        //     _orders.Add(new OrderViewModel { CustomerId = "Customer2", EmployeeId = null, OrderDate = DateTime.Now, OrderId = 2 });
+        //     _orders.Add(new OrderViewModel { CustomerId = "Customer3", EmployeeId = null, OrderDate = DateTime.Now, OrderId = 3 });
+        //     _orders.Add(new OrderViewModel { CustomerId = "Customer4", EmployeeId = null, OrderDate = DateTime.Now, OrderId = 4 });
+        //     _orders.Add(new OrderViewModel { CustomerId = "Customer5", EmployeeId = null, OrderDate = DateTime.Now, OrderId = 5 });
+        // }
+        // Product = new Product()
+        // {
+        //     LaunchDate = DateTime.Now,
+        //     Name = "Apple",
+        //     Description = "Green or red",
+        //     Type = ProductType.Standard,
+        //     Price = 2.5m,
+        //     HasSubscription = false
+        // };
     }
 }

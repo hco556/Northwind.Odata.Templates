@@ -3,7 +3,7 @@
 <#@ output extension=".cs"#>
 <#@ template language="C#" hostspecific="True" #>
 <#
-    var entitySets = new EntitySet[] 
+    var entitySets = new EntitySet[]  
     {
         new EntitySet("Employee", "Employee", "EmployeeId", "int"),
          

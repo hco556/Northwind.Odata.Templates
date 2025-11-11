@@ -1,0 +1,15 @@
+<#@ template debug="true" language="C#" #>
+<#@ output extension=".txt" encoding="utf-8" #>
+<#@ assembly name="$(ProjectDir)\bin\Debug\net8.0\Northwind.Templates.dll" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Text.Json" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #> 
+<#@ import namespace="System.Text.Json" #> 
+<#@ import namespace="System.Text.Json.Serialization" #>
+<#@ import namespace="System.ComponentModel" #>       
+
+<#=System.Environment.Version #>  
+
