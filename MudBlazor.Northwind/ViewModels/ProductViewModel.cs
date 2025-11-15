@@ -3,7 +3,7 @@ using MudBlazor.Northwind.Data;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace MudBlazor.Northwind.Shared.ViewModels
+namespace MudBlazor.Northwind.ViewModels
 {
     public class ProductViewModel
     {

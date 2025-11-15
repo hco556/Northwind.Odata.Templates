@@ -1,12 +1,12 @@
-﻿
-using MudBlazor.Northwind.Attributes;
-using MudBlazor.Northwind.Constants;
-using MudBlazor.Northwind.Data;
+﻿using MudBlazor.Northwind.Constants;
+using Northwind.CodeGenerator.Attributes;
+using Northwind.CodeGenerator.Data;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 
-namespace MudBlazor.Northwind.ViewModels;
+
+namespace Northwind.CodeGenerator.ViewModels;
 //Start-Template//
 public class EmployeeViewModel
 {
@@ -34,7 +34,7 @@ public class EmployeeViewModel
     [DisplayName("PassWord")]
     [FormControl(FormControlType.Password)]
     [Required(ErrorMessage ="Password is Required")] // optional: enforce non-empty
-    [PasswordComplexity] // uses defaults: 12 chars, 2 upper, 2 lower, 2 special
+    [MudBlazor.Northwind.Attributes.PasswordComplexity] // uses defaults: 12 chars, 2 upper, 2 lower, 2 special
     public string Password { get; set; } = null!;
 
     [DisplayName("Title Of Courtesy")]

@@ -1,4 +1,4 @@
-﻿namespace MudBlazor.Northwind.ViewModels;
+﻿namespace Northwind.CodeGenerator.ViewModels;
 //Start-Template//
 public class OrderViewModel
 {
