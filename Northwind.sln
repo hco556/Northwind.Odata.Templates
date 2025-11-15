@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.Client.Lib", "Nor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.Templates", "Northwind.Templates\Northwind.Templates.csproj", "{045FD98B-0B3A-CCB0-DA66-4BBAE9E51DEE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.CodeGenerator", "Northwind.CodeGenerator\Northwind.CodeGenerator.csproj", "{18AEF1FC-7EB7-42E1-934D-BB3ED5896743}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -153,6 +155,18 @@ Global
 		{045FD98B-0B3A-CCB0-DA66-4BBAE9E51DEE}.Release|x64.Build.0 = Release|Any CPU
 		{045FD98B-0B3A-CCB0-DA66-4BBAE9E51DEE}.Release|x86.ActiveCfg = Release|Any CPU
 		{045FD98B-0B3A-CCB0-DA66-4BBAE9E51DEE}.Release|x86.Build.0 = Release|Any CPU
+		{18AEF1FC-7EB7-42E1-934D-BB3ED5896743}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18AEF1FC-7EB7-42E1-934D-BB3ED5896743}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18AEF1FC-7EB7-42E1-934D-BB3ED5896743}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{18AEF1FC-7EB7-42E1-934D-BB3ED5896743}.Debug|x64.Build.0 = Debug|Any CPU
+		{18AEF1FC-7EB7-42E1-934D-BB3ED5896743}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{18AEF1FC-7EB7-42E1-934D-BB3ED5896743}.Debug|x86.Build.0 = Debug|Any CPU
+		{18AEF1FC-7EB7-42E1-934D-BB3ED5896743}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18AEF1FC-7EB7-42E1-934D-BB3ED5896743}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18AEF1FC-7EB7-42E1-934D-BB3ED5896743}.Release|x64.ActiveCfg = Release|Any CPU
+		{18AEF1FC-7EB7-42E1-934D-BB3ED5896743}.Release|x64.Build.0 = Release|Any CPU
+		{18AEF1FC-7EB7-42E1-934D-BB3ED5896743}.Release|x86.ActiveCfg = Release|Any CPU
+		{18AEF1FC-7EB7-42E1-934D-BB3ED5896743}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

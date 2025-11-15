@@ -72,6 +72,8 @@
 
   <ItemGroup>
     <Folder Include="Components\Employees\" />
+    <Folder Include="Generated\" />
+    <Folder Include="NewFolder\" />
   </ItemGroup>
 
   
@@ -97,8 +99,24 @@
     </Compile>
   </ItemGroup>
 
-
   <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+    <Folder Include="Generators\" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- Ensure generated files are compiled -->
+    <Compile Include="Generated\**\*.cs" />
+  </ItemGroup>
+
+  <!-- Run the generator before build; generator should accept output path argument -->
+  <Target Name="RunViewModelGenerator" BeforeTargets="BeforeBuild">
+    <!-- create folder -->
+    <MakeDir Directories="$(ProjectDir)Generated" />
+    <!-- invoke the generator project; adjust path and args as needed -->
+    <Exec Command="dotnet run --project ..\Northwind.CodeGenerator\Northwind.CodeGenerator.csproj -- $(ProjectDir)Generated" />
+  </Target>
+
+  <!-- Remove generated files on Clean -->
+  <Target Name="CleanGenerated" AfterTargets="Clean">
+    <RemoveDir Directories="$(ProjectDir)Generated" />
+  </Target>
 </Project>
