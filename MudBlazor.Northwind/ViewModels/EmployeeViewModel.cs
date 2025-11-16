@@ -15,6 +15,15 @@ public class EmployeeViewModel
     [FormControl(FormControlType.Numeric)]
     public int EmployeeId { get; set; }
 
+
+    [Range(0, 999999.99)]
+    public decimal? Salary { get; set; }
+
+    public DateTime? HireDate { get; set; }
+
+    public bool IsActive { get; set; }
+
+    [StringLength(20, MinimumLength = 3)]
     [DisplayName("Date Created")]
     [ReadOnly(true)]
     public DateTime CreationDate { get; set; } = DateTime.Now;
@@ -46,11 +55,6 @@ public class EmployeeViewModel
     [FormControl(FormControlType.Datetime)]
     public DateTime? BirthDate { get; set; }
 
-    [DisplayName("Hire Date")]
-    [NotInFuture]
-    [Required(ErrorMessage ="Hire Date is required")]
-    [FormControl(FormControlType.Datetime)]
-    public DateTime? HireDate { get; set; }
 
     public string? Address { get; set; }
 

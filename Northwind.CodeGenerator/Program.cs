@@ -1,5 +1,9 @@
-﻿using Northwind.CodeGenerator.Attributes;
+﻿using MudBlazor.Extensions.Options;
+using MudBlazor.Northwind.Services;
+using Northwind.CodeGenerator.Attributes;
+using Northwind.CodeGenerator.Generators;
 using Northwind.CodeGenerator.Helpers;
+using Northwind.CodeGenerator.ViewModels;
 using Shared.Models;
 using System;
 using System.Collections;
@@ -14,8 +18,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Text.RegularExpressions;
-using Northwind.CodeGenerator.Generators;
-using Northwind.CodeGenerator.ViewModels;
+using YamlDotNet.Core.Tokens;
 string splitTokensForLabel = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 var baseType = typeof(Shared.Models.Employee);
 
@@ -139,11 +142,86 @@ foreach (var p in props)
 {
     Console.WriteLine($"{p.Name} ({p.PropertyType.Name}) Nullable: {ReflectionExtensions.IsNullable(p)}");
 }
+var empVMFormModel = new MudBlazor.Northwind.ViewModels.EmployeeViewModel();
+var datePicker = MudControlFactory.CreateControl<MudBlazor.MudDatePicker>(
+    new Dictionary<string, object?>
+    {
+        { "Mask", "00/00/0000" },
+        { "IsDateDisabledFunc", (Func<DateTime, bool>)(d => d.DayOfWeek == DayOfWeek.Sunday) },
+        { "AdditionalDateClassesFunc", (Func<DateTime, string?>)(d => d.Day == 1 ? "highlight" : null) },
+        { "@bind-Date", empVMFormModel.BirthDate},
+        { "Placeholder", "Select a date" }
+    }
+);
+var numericField = MudControlFactory.CreateControl<MudBlazor.MudNumericField<int>>(
+    new Dictionary<string, object?>
+    {
+        { "Label", "Employee Id" },
+        { "Min", 0 },
+        { "Max", 120 },
+        { "@bind-Value",empVMFormModel},
+        { "Required", true },
+        { "Value", empVMFormModel.EmployeeId },
+        { "ValueChanged", (Action<string>)(val => empVMFormModel.EmployeeId = val) },
+        { "ValueExpression", (System.Linq.Expressions.Expression<Func<string>>)(() => empVMFormModel.EmployeeId) }
+    }
+);
+
+var textField = MudControlFactory.CreateControl<MudBlazor.MudTextField<string>>(
+    new Dictionary<string, object?>
+    {
+        { "Label", "Employee ID" },
+        { "Required", true },
+        { "Value", empVMFormModel.EmployeeId },
+        { "ValueChanged", (Action<string>)(val => empVMFormModel.EmployeeId = val) },
+        { "ValueExpression", (System.Linq.Expressions.Expression<Func<string>>)(() => empVMFormModel.EmployeeId) }
+    }
+);
+var singleSelect = MudControlFactory.CreateControl<MudBlazor.Extensions.Components.MudExSelect<EmployeeViewModel>>(
+    new Dictionary<string, object?>
+    {
+        { "MultiSelection", false },
+        { "ItemCollection", new List<EmployeeViewModel> {  } },
+        { "Value",  },
+        { "ValueChanged", (Action<EmployeeViewModel>)(val => Console.WriteLine($"Selected: {val}")) },
+        { "SearchBox", true },
+        { "SearchBoxVariant", MudBlazor.Variant.Outlined },
+        { "Color", MudBlazor.Color.Primary },
+        { "SelectAll", false }
+    }
+);
+var multiSelect = MudControlFactory.CreateControl<MudBlazor.Extensions.Components.MudExSelect<OrderViewModel>>(
+    new Dictionary<string, object?>
+    {
+        { "MultiSelection", true },
+        { "ItemCollection", new List<OrderViewModel> { } },
+        { "SelectedValues", new HashSet<OrderViewModel> {  } },
+        { "PopOverAnimation", AnimationType.Pulse },
+        { "Label", "Technologies" }
+    }
+);
+
+
+
+// CheckBox
+var activeCheckBox = MudControlFactoryUsage.CreateCheckBoxFromModel(empVMFormModel, nameof(MudBlazor.Northwind.ViewModels.EmployeeViewModel.IsActive));
+
+// ExSelect (single selection)
+var departmentSelect = MudControlFactoryUsage.CreateExSelectFromModel<MudBlazor.Northwind.ViewModels.EmployeeViewModel, string>(
+    empVMFormModel,
+    nameof(MudBlazor.Northwind.ViewModels.EmployeeViewModel.Department),
+    new List<string> { "HR", "IT", "Finance" },
+    multiSelection: false
+);
+
+// DatePicker
+var hireDatePicker = MudControlFactoryUsage.CreateDatePickerFromModel(empVMFormModel, nameof(EmployeeViewModel.HireDate));
+
 //string employeeViewModelContents = ViewModelGenerator.GenerateViewModelSource(typeof(Shared.Models.Employee), "Generated.ViewModels", "EmployeeViewModel");
 //var generatedfilespath = "C:\\Users\\hcopp\\Documents\\Work\\OData\\Northwind.OData.Templates\\MudBlazor.Northwind\\Generated\\EmployeeViewModel.cs";
 //File.WriteAllText(generatedfilespath, employeeViewModelContents);
 MudBlazor.Northwind.ViewModels.EmployeeViewModel employeevm = new MudBlazor.Northwind.ViewModels.EmployeeViewModel();
-string employeeFormContents = MudFormGenerator.GenerateMudForm(employeevm.GetType(), "MudBlazor.Northwind.Components.Employees", "EmployeeEditFormGen");
+string employeeFormContents = MudFormGenerator.GenerateMudForm(empVMFormModel.GetType(), "MudBlazor.Northwind.Components.Employees", "EmployeeEditFormGen");
 var generatedfilesmudformpath = "C:\\Users\\hcopp\\Documents\\Work\\OData\\Northwind.OData.Templates\\MudBlazor.Northwind\\Components\\Pages\\Employees\\EmployeeEditFormGen.razor";
 File.WriteAllText(generatedfilesmudformpath, employeeFormContents);
 //Console.WriteLine(employee.Territories.GetType().Name);
