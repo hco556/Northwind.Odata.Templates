@@ -8,7 +8,6 @@ using MudBlazor.Northwind.Attributes;
 using MudBlazor.Northwind.Components;
 using MudBlazor.Northwind.Data;
 using MudBlazor.Northwind.Services;
-using MudBlazor.Northwind.Shared.ViewModels;
 using MudBlazor.Northwind.T4;
 using MudBlazor.Services;
 using Northwind.Odata.Api.Client;

@@ -52,7 +52,7 @@ namespace MudBlazor.Northwind.Mappers.Employee
                 //Orders = employee.Orders != null
                 //    ? new List<Order>(employee.Orders)
                 //    : new List<Order>(),
-                ReportsToEmployee = MapEmployeeToViewModel(employee.ReportsToNavigation),
+                ReportsTo= MapEmployeeToViewModel(employee.ReportsToNavigation),
                 Orders = OrderMapper.MapOrdersToViewModels(employee.Orders)
                 //Territories = employee.Territories != null
                 //    ? new List<Territory>(employee.Territories)

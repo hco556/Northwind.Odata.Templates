@@ -15,6 +15,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Text.RegularExpressions;
 using Northwind.CodeGenerator.Generators;
+using Northwind.CodeGenerator.ViewModels;
 string splitTokensForLabel = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 var baseType = typeof(Shared.Models.Employee);
 
@@ -138,9 +139,13 @@ foreach (var p in props)
 {
     Console.WriteLine($"{p.Name} ({p.PropertyType.Name}) Nullable: {ReflectionExtensions.IsNullable(p)}");
 }
-string employeeViewModelContents = ViewModelGenerator.GenerateViewModelSource(typeof(Shared.Models.Employee), "Generated.ViewModels", "EmployeeViewModel");
-var generatedfilespath = "C:\\Users\\hcopp\\Documents\\Work\\OData\\Northwind.OData.Templates\\MudBlazor.Northwind\\Generated\\EmployeeViewModel.cs";
-File.WriteAllText(generatedfilespath, employeeViewModelContents);
+//string employeeViewModelContents = ViewModelGenerator.GenerateViewModelSource(typeof(Shared.Models.Employee), "Generated.ViewModels", "EmployeeViewModel");
+//var generatedfilespath = "C:\\Users\\hcopp\\Documents\\Work\\OData\\Northwind.OData.Templates\\MudBlazor.Northwind\\Generated\\EmployeeViewModel.cs";
+//File.WriteAllText(generatedfilespath, employeeViewModelContents);
+MudBlazor.Northwind.ViewModels.EmployeeViewModel employeevm = new MudBlazor.Northwind.ViewModels.EmployeeViewModel();
+string employeeFormContents = MudFormGenerator.GenerateMudForm(employeevm.GetType(), "MudBlazor.Northwind.Components.Employees", "EmployeeEditFormGen");
+var generatedfilesmudformpath = "C:\\Users\\hcopp\\Documents\\Work\\OData\\Northwind.OData.Templates\\MudBlazor.Northwind\\Components\\Pages\\Employees\\EmployeeEditFormGen.razor";
+File.WriteAllText(generatedfilesmudformpath, employeeFormContents);
 //Console.WriteLine(employee.Territories.GetType().Name);
 //var employeeVM = new EmployeeViewModel();
 //Properties = typeof(EmployeeViewModel).GetProperties()
@@ -178,9 +183,9 @@ File.WriteAllText(generatedfilespath, employeeViewModelContents);
 //rt.Session["Count"] = 7;
 //rt.Initialize();
 //Console.WriteLine(rt.TransformText());
-var contentsEmployee = File.ReadAllText("C:\\Users\\hcopp\\Documents\\Work\\OData\\Northwind.OData.Templates\\MudBlazor.Northwind\\ViewModels\\EmployeeViewModel.cs");
-var contentsOrder = File.ReadAllText("C:\\Users\\hcopp\\Documents\\Work\\OData\\Northwind.OData.Templates\\MudBlazor.Northwind\\ViewModels\\EmployeeViewModel.cs");
-string path = "C:\\Users\\hcopp\\Documents\\Work\\OData\\Northwind.OData.Templates\\MudBlazor.Northwind\\MyFile.tt";
-string textToAppend = "This is new content.\n";
+//var contentsEmployee = File.ReadAllText("C:\\Users\\hcopp\\Documents\\Work\\OData\\Northwind.OData.Templates\\MudBlazor.Northwind\\ViewModels\\EmployeeViewModel.cs");
+//var contentsOrder = File.ReadAllText("C:\\Users\\hcopp\\Documents\\Work\\OData\\Northwind.OData.Templates\\MudBlazor.Northwind\\ViewModels\\EmployeeViewModel.cs");
+//string path = "C:\\Users\\hcopp\\Documents\\Work\\OData\\Northwind.OData.Templates\\MudBlazor.Northwind\\MyFile.tt";
+//string textToAppend = "This is new content.\n";
 
-File.AppendAllText(path, textToAppend);
+//File.AppendAllText(path, textToAppend);
