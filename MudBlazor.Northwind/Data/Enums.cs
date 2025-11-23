@@ -17,4 +17,8 @@
         DropDownMultiSelect,
         Password
     }
+    public class FormControlProperties
+   {
+        public Dictionary<string, string>? Properties { get; set; }
+}
 }

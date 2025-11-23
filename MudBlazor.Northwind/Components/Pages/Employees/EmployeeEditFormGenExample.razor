@@ -1,4 +1,4 @@
-@page "/employeeeditformgen"
+﻿@page "/employeeeditformgen/{employeeId:int}"
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Forms
 @using MudBlazor
@@ -139,17 +139,25 @@
 </EditForm>
 
 @code {
-    [Parameter] public MudBlazor.Northwind.ViewModels.EmployeeViewModel Model { get; set; } = new MudBlazor.Northwind.ViewModels.EmployeeViewModel();
+   // [Parameter] public int? EmployeeId { get; set; }
+    private  MudBlazor.Northwind.ViewModels.EmployeeViewModel? Model { get; set; } = new MudBlazor.Northwind.ViewModels.EmployeeViewModel();
 
     private List<MudBlazor.Northwind.ViewModels.OrderViewModel> _OrdersItems = new List<MudBlazor.Northwind.ViewModels.OrderViewModel>();
     private List<MudBlazor.Northwind.ViewModels.EmployeeViewModel> _ReportsToItems = new List<MudBlazor.Northwind.ViewModels.EmployeeViewModel>();
 
     protected override async Task OnInitializedAsync()
     {
+
+        Model = await kiotaRequestBuilder.GetEmployeeById(1);
+        if (Model != null)
+        {
+            _ReportsToItems = await kiotaRequestBuilder.GetAllEmployees();
+            _OrdersItems = await kiotaRequestBuilder.GetOrdersForEmployee(Model.EmployeeId);
+        }
         // TODO: populate _OrdersItems (List<MudBlazor.Northwind.ViewModels.OrderViewModel>) from API or service
         // e.g. _OrdersItems = await KiotaRequestBuilder.GetMudBlazor.Northwind.ViewModels.OrderViewModelList(...);
-        // TODO: populate _ReportsToItems (List<MudBlazor.Northwind.ViewModels.EmployeeViewModel>) from API or service
-        // e.g. _ReportsToItems = await KiotaRequestBuilder.GetMudBlazor.Northwind.ViewModels.EmployeeViewModelList(...);
+        // Example: populate _ReportsToItems using custom query "employees?$filter=Id ne {Id}"
+        // _ReportsToItems = await KiotaRequestBuilder.SomeMethodThatReturnsMudBlazor.Northwind.ViewModels.EmployeeViewModelList("employees?$filter=Id ne {Id}");
     }
 
     private async Task HandleValidSubmit()

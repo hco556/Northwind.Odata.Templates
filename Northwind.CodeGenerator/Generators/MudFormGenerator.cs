@@ -1,4 +1,5 @@
 ﻿using MudBlazor.Northwind.Services;
+using Northwind.CodeGenerator.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Northwind.CodeGenerator.Generators
 {
@@ -20,6 +22,58 @@ namespace Northwind.CodeGenerator.Generators
     /// </summary>
     public static class MudFormGenerator
     {
+        public static string GenerateViewModel<T>(T item)
+        {
+            //Employee employeeTemplate = new Employee();
+            //item = default;
+            Type templateType = item.GetType();
+            Console.WriteLine(templateType.Name);
+            MemberInfo[] members = templateType.GetMembers();
+            var vmClassName =  item.GetType().ToString() + "ViewModel";
+            StringBuilder viewModelStringBuilder = new StringBuilder();
+            viewModelStringBuilder.AppendLine("public class " + vmClassName + "{");
+            foreach (var member in members)
+            {
+                var memberType = member.MemberType;
+
+                if (memberType.ToString() == "Property")
+                {
+
+                    PropertyInfo? propInfo = templateType.GetProperty(member.Name);
+                    Type propType = propInfo.PropertyType;
+                    var shortPropTypeName = propType.Name;
+                    string label = Regex.Replace(member.Name, "(?<!^)([A-Z])", " $1");
+                    viewModelStringBuilder.AppendLine("     [DisplayName(\"" + label + "\")]");
+                    //if (member.Name == "Title" || member.Name == "LastName")
+                    //    break;
+                    if (propType.Name.Contains("Nullable") || propType.Name.Contains("ICollection"))
+                    {
+                        //System.Nullable`1[[System.Int32,
+                        var startIdx = propType.FullName.IndexOf("[[") + 2;
+                        // var propTypeName = propType.FullName.Replace("System.Nullable`1[[", "");
+                        var endIdx = propType.FullName.IndexOf(",");
+                        shortPropTypeName = propType.FullName.Substring(startIdx, endIdx - startIdx);
+
+                    }
+                    if (propType.Name.Contains("Nullable") || ReflectionExtensions.IsNullable(propInfo))
+                    {
+                        shortPropTypeName += "?";
+                    }
+                    if (propType.Name.Contains("ICollection"))
+                    {
+                        var collectionElementType = ReflectionExtensions.GetCollectionElementType(templateType, member.Name);
+                        shortPropTypeName = "ICollection<" + collectionElementType + ">";
+
+                    }
+
+                    Console.WriteLine(shortPropTypeName + " " + member.Name);
+                    viewModelStringBuilder.AppendLine("     public " + shortPropTypeName + " " + member.Name + "{ get; set; }");
+                }
+
+            }
+            viewModelStringBuilder.AppendLine("}");
+            return viewModelStringBuilder.ToString();
+        }
         public static string GenerateMudForm(Type viewModelType,
             string componentNamespace = "MudBlazor.Northwind.Components.Pages.Employee",
             string componentName = null)

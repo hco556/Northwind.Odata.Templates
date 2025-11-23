@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="Blazored.FluentValidation" Version="2.2.0" />
+    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="FluentValidation" Version="12.1.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" />
     <PackageReference Include="MudBlazor" Version="8.*" />
@@ -72,7 +73,7 @@
 
   <ItemGroup>
     <Folder Include="Components\Employees\" />
-    <Folder Include="Generated\" />
+    <Folder Include="CustomGenerators\" />
   </ItemGroup>
 
   
@@ -96,6 +97,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>RuntimeTextTemplate.tt</DependentUpon>
     </Compile>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
 

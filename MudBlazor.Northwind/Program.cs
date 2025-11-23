@@ -1,4 +1,5 @@
-﻿using MetadataExtractor;
+﻿using Blazored.LocalStorage;
+using MetadataExtractor;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 using MudBlazor;
@@ -8,6 +9,7 @@ using MudBlazor.Northwind.Attributes;
 using MudBlazor.Northwind.Components;
 using MudBlazor.Northwind.Data;
 using MudBlazor.Northwind.Services;
+using MudBlazor.Northwind.Services.UserPreferences;
 using MudBlazor.Northwind.T4;
 using MudBlazor.Services;
 using Northwind.Odata.Api.Client;
@@ -22,6 +24,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add MudBlazor services
 builder.Services.AddMudServices();
 builder.Services.AddMudExtensions();
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddScoped<IUserPreferencesService, UserPreferencesService>();
+builder.Services.AddScoped<LayoutService>();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();

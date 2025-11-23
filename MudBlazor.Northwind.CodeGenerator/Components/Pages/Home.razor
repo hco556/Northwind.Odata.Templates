@@ -1,0 +1,65 @@
+﻿@page "/"
+@using MudBlazor.Extensions
+@using MudBlazor.Extensions.Components
+@using MudBlazor.Extensions.Components.ObjectEdit
+@* @using MudBlazor.Utilities  *@
+@using MudBlazor
+@using System.Reflection
+@using System.ComponentModel
+@using System.ComponentModel.DataAnnotations
+@using Shared.Models
+
+<MudPaper Class="pa-4">
+    <MudForm>
+	    <MudText Typo="Typo.h6">Model classes</MudText>
+        <MudExSelect T="string" ItemCollection="ModelNames"></MudExSelect>
+@* 
+	    <MudSelect T="string"
+			       Label="Select Model"
+			       Value="@SelectedModel"
+			       ValueChanged="@(OnSelectedModelChanged)"
+                   Disabled="false"
+			       Dense="true"
+			       Clearable="true">
+            @if (ModelNames != null)
+            {
+		        @foreach (var name in ModelNames)
+		        {
+			        <MudSelectItem Value="@name">@name</MudSelectItem>
+		        }
+            }
+	    </MudSelect> *@
+    </MudForm>
+</MudPaper>
+
+@code {
+
+    private String SelectedPropertyName;
+    private MudDropContainer<DropItem> _container;
+    private List<string> ModelNames = new List<string> { "Employee", "Order", "Customer"};
+    private string? SelectedModel;
+    protected override void OnInitialized()
+    {
+        // Use any known model type's assembly (Employee exists in the target namespace)
+        // var asm = typeof(Employee).Assembly;
+        // ModelNames = asm.GetTypes()
+        //                 .Where(t => t.IsClass && t.Namespace == "Shared.Models")
+        //                 .Select(t => t.Name)
+        //                 .OrderBy(n => n)
+        //                 .ToList();
+        //OnSelectedModelChanged("Employee");
+    }
+    private Task OnSelectedModelChanged(string value)
+    {
+
+        SelectedModel = value;
+
+        return Task.CompletedTask;
+    }
+    public class DropItem
+    {
+        public string Name { get; init; }
+        public string Selector { get; set; }
+        public int Order { get; set; }
+    }
+}

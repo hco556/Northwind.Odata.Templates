@@ -3,6 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
+using MudBlazor;
+using MudBlazor.Extensions;
 
 namespace Northwind.CodeGenerator.Generators
 {
@@ -28,18 +37,7 @@ namespace Northwind.CodeGenerator.Generators
 
     public static class MudControlFactoryUsage
     {
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using MudBlazor;
-using MudBlazor.Extensions;
 
-public static class MudControlFactoryUsage
-    {
         // ✅ MudCheckBox<bool>
         public static MudCheckBox<bool> CreateCheckBoxFromModel<TModel>(TModel model, string propertyName)
         {

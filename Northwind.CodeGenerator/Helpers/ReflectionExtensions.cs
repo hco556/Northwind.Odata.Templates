@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -7,6 +8,43 @@ namespace Northwind.CodeGenerator.Helpers
 {
     public static class ReflectionExtensions
     {
+        /// <summary>
+        /// Determines if a property on a given class type is a collection,
+        /// and returns the element type if it is.
+        /// </summary>
+        public static Type? GetCollectionElementType(Type classType, string propertyName)
+        {
+            // Find the property by name
+            var property = classType.GetProperty(propertyName,
+                BindingFlags.Public | BindingFlags.Instance);
+
+            if (property == null)
+                throw new ArgumentException($"Property '{propertyName}' not found on {classType.Name}");
+
+            var propertyType = property.PropertyType;
+
+            // Handle arrays directly
+            if (propertyType.IsArray)
+                return propertyType.GetElementType();
+
+            // Handle generic collections (ICollection<T>, List<T>, etc.)
+            if (propertyType.IsGenericType)
+            {
+                var genericDef = propertyType.GetGenericTypeDefinition();
+                if (typeof(IEnumerable<>).IsAssignableFrom(genericDef) ||
+                    propertyType.GetInterfaces().Any(i => i.IsGenericType &&
+                        i.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+                {
+                    return propertyType.GetGenericArguments()[0];
+                }
+            }
+
+            // Handle non-generic collections (like ICollection)
+            if (typeof(IEnumerable).IsAssignableFrom(propertyType))
+                return typeof(object); // fallback if element type is unknown
+
+            return null; // Not a collection
+        }
         /// <summary>
         /// Returns true when the given property is declared nullable.
         /// - For value types: checks Nullable{T} (int? etc.)

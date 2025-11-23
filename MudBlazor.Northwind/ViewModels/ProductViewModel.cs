@@ -2,11 +2,13 @@
 using MudBlazor.Northwind.Data;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 
 namespace MudBlazor.Northwind.ViewModels
 {
     public class ProductViewModel
     {
+    
         [DisplayName("LaunchDate")]
         [FormControl(FormControlType.Datetime)]
         public DateTime LaunchDate { get; init; }

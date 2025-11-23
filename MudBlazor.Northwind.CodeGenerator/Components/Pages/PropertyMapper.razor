@@ -1,0 +1,552 @@
+﻿@page "/PropertyMapper"
+@using MudBlazor.Extensions
+@using MudBlazor.Extensions.Components
+@using MudBlazor.Utilities 
+@using MudBlazor
+@using System.Reflection
+@using System.ComponentModel
+@using System.ComponentModel.DataAnnotations
+@using Shared.Models
+@* @using TryMudBlazor.Client.Components
+@using TryMudBlazor.Client.Components.Generators *@
+
+<MudPaper Class="pa-4">
+	<MudText Typo="Typo.h6">Model classes</MudText>
+
+	<MudSelect T="string"
+			   Label="Select Model"
+			   Value="SelectedModel"
+			   ValueChanged="OnSelectedModelChanged"
+			   Dense="true"
+			   Clearable="true">
+		@foreach (var name in ModelNames)
+		{
+			<MudSelectItem Value="@name">@name</MudSelectItem>
+		}
+	</MudSelect>
+
+	<MudForm Class="mt-4">
+		<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(string.IsNullOrEmpty(SelectedModel))" OnClick="@LoadProperties">
+			Load Properties
+		</MudButton>
+	</MudForm>
+
+	@if (SelectedModelProperties.Any())
+	{
+		<MudDivider Class="my-3" />
+
+		<MudGrid>
+			<MudItem xs="4"><MudText Typo="Typo.subtitle2"><b>Name</b></MudText></MudItem>
+			<MudItem xs="4"><MudText Typo="Typo.subtitle2"><b>Type</b></MudText></MudItem>
+			<MudItem xs="4"><MudText Typo="Typo.subtitle2"><b>Attributes</b></MudText></MudItem>
+
+			@foreach (var prop in SelectedModelProperties)
+			{
+				<MudItem xs="4">@prop.Name</MudItem>
+				<MudItem xs="4">@prop.TypeName</MudItem>
+				<MudItem xs="4">@prop.Attributes</MudItem>
+			}
+		</MudGrid>
+
+	}
+</MudPaper>
+<div class="d-flex flex-column mud-width-full mud-height-full">
+	<MudToolBar Class="gap-4">
+		<MudButton OnClick="LoadServerData" Variant="Variant.Filled" Color="Color.Default">Load Data</MudButton>
+		<MudButton OnClick="SaveData" Variant="Variant.Filled" Color="Color.Primary">Save Data</MudButton>
+		<MudButton OnClick="GenerateViewModel" Variant="Variant.Filled" Color="Color.Secondary" Disabled="@(!_dropzoneItems.Any())">Generate ViewModel</MudButton>
+		<MudButton OnClick="GenerateFormPage" Variant="Variant.Outlined" Color="Color.Info" Disabled="@(!_dropzoneItems.Any())">Generate Form Page</MudButton>
+		<MudSpacer />
+		<MudButton OnClick="Reset" Variant="Variant.Text" Color="Color.Error">Reset Example</MudButton>
+	</MudToolBar>
+
+	<MudDropContainer T="DropItem" Items="@_dropzoneItems" @ref="_container" ItemsSelector="@((item, dropzone) => item.Selector == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1">
+		<ChildContent>
+			@for (int i = 1; i < 3; i++)
+			{
+				var dropzone = i.ToString();
+				<MudPaper Class="ma-4 flex-grow-1">
+					<MudList T="string" Class="d-flex flex-column mud-height-full">
+						<MudListSubheader>Drop Zone @dropzone</MudListSubheader>
+						<MudDropZone T="DropItem" Identifier="@dropzone" Class="flex-grow-1" AllowReorder="true" />
+					</MudList>
+				</MudPaper>
+			}
+		</ChildContent>
+		<ItemRenderer>
+			<MudListItem T="string" Text="@($"{context.Name} ({context.Order})")" OnClick="@(() => ShowFormControlProperties(context.Name))" />
+		</ItemRenderer>
+	</MudDropContainer>
+	<MudDivider Class="my-3" />
+	<MudText>@SelectedPropertyName</MudText>
+@*     <MudExSelect T="string" Label="Selected Properties"
+                                 ItemCollection="@_dropzoneItems.Where(x => x.Selector == "2").OrderBy(x => x.Order).Select(x=>x.Name).ToList()"
+                                 Value="@SelectedPropertyName"
+                                 ValueChanged="@((string v) => SelectedPropertyName = v)"
+                                 MultiSelection="false"
+                                 SearchBox="true"
+                                 Color="Color.Primary">
+    </MudExSelect> *@
+	<MudText Typo="Typo.subtitle2">Generated ViewModel code</MudText>
+	<MudTextField @bind-Value="GeneratedViewModelCode" Lines="12" ReadOnly="true" FullWidth="true" Variant="Variant.Outlined" />
+	<MudDivider Class="my-3" />
+
+	<MudText Typo="Typo.subtitle2">Generated Form page</MudText>
+	<MudTextField @bind-Value="GeneratedFormPageCode" Lines="18" ReadOnly="true" FullWidth="true" Variant="Variant.Outlined" />
+
+
+</div>
+@code {
+	private String SelectedPropertyName;
+	private MudDropContainer<DropItem> _container;
+	private List<string> ModelNames = new();
+	private string? SelectedModel;
+	private List<PropertyDisplay> SelectedModelProperties = new();
+	private Type? selectedType => string.IsNullOrEmpty(SelectedModel) ? null : typeof(Shared.Models.Employee).Assembly.GetType($"Shared.Models.{SelectedModel}");
+	// generated code output
+	private string GeneratedViewModelCode { get; set; } = string.Empty;
+	private string GeneratedFormPageCode { get; set; } = string.Empty;
+	private List<string> SelectedPropertyNames = new();
+	protected override void OnInitialized()
+	{
+		// Use any known model type's assembly (Employee exists in the target namespace)
+		var asm = typeof(Employee).Assembly;
+		ModelNames = asm.GetTypes()
+						.Where(t => t.IsClass && t.Namespace == "Shared.Models")
+						.Select(t => t.Name)
+						.OrderBy(n => n)
+						.ToList();
+		OnSelectedModelChanged("Employee");
+	}
+	private void ShowFormControlProperties(string propName)
+	{
+		// find property on the model type
+		var pi = selectedType.GetProperty(propName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+	
+		var underlying = Nullable.GetUnderlyingType(pi.PropertyType) ?? pi.PropertyType;
+		var typeName = underlying.FullName ?? underlying.Name;
+		if (underlying == typeof(DateTime))
+		{
+		}
+
+	}
+	private string GetSubTypeProperty<T>(string propName)
+	{
+
+		T itemTemplate = default;
+		Type templateType = itemTemplate.GetType();
+		Console.WriteLine(templateType.Name);
+		MemberInfo[] members = templateType.GetMembers();
+
+		PropertyInfo? propInfo = templateType.GetProperty(propName);
+		Type propType = propInfo.PropertyType;
+		var shortPropTypeName = propType.Name;
+		//if (member.Name == "Title" || member.Name == "LastName")
+		//    break;
+		if (propType.Name.Contains("Nullable") || propType.Name.Contains("ICollection"))
+		{
+			//System.Nullable`1[[System.Int32,
+			var startIdx = propType.FullName.IndexOf("[[") + 2;
+			// var propTypeName = propType.FullName.Replace("System.Nullable`1[[", "");
+			var endIdx = propType.FullName.IndexOf(",");
+			shortPropTypeName = propType.FullName.Substring(startIdx, endIdx - startIdx);
+
+		}
+		if (propType.Name.Contains("Nullable"))
+		{
+			shortPropTypeName += "?";
+		}
+		if (propType.Name.Contains("ICollection"))
+		{
+			shortPropTypeName = "ICollection<" + shortPropTypeName + ">";
+		}
+
+		Console.WriteLine(shortPropTypeName + " " + propName);
+		return shortPropTypeName;
+	}
+	private Task OnSelectedModelChanged(string value)
+	{
+
+		SelectedModel = value;
+
+		return Task.CompletedTask;
+	}
+
+	private void LoadProperties()
+	{
+		SelectedModelProperties.Clear();
+		if (string.IsNullOrEmpty(SelectedModel))
+			return;
+
+		var asm = typeof(Employee).Assembly;
+		var type = asm.GetType($"Shared.Models.{SelectedModel}");
+		if (type == null)
+			return;
+
+		var props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+						.OrderBy(p => p.Name);
+
+		foreach (var p in props)
+		{
+			var attrs = p.GetCustomAttributes(true).Cast<object>().ToArray();
+			SelectedModelProperties.Add(new PropertyDisplay
+			{
+				Name = p.Name,
+				TypeName = GetFriendlyTypeName(p.PropertyType),
+				Attributes = FormatAttributes(attrs)
+			});
+		}
+	}
+
+	private static string GetFriendlyTypeName(Type t)
+	{
+		if (t.IsGenericType)
+		{
+			var generic = t.GetGenericTypeDefinition();
+			var argNames = string.Join(", ", t.GetGenericArguments().Select(GetFriendlyTypeName));
+			return $"{generic.Name.Split('`')[0]}<{argNames}>";
+		}
+		if (t.IsArray)
+			return $"{GetFriendlyTypeName(t.GetElementType() ?? t)}[]";
+		return t.Name;
+	}
+
+	private static string FormatAttributes(object[] attrs)
+	{
+		if (attrs == null || attrs.Length == 0)
+			return string.Empty;
+
+		var parts = new List<string>();
+		foreach (var a in attrs)
+		{
+			switch (a)
+			{
+				case DisplayNameAttribute da:
+					parts.Add($"DisplayName=\"{da.DisplayName}\"");
+					break;
+				case DisplayAttribute d:
+					var display = $"Display(Name=\"{d.Name}\")";
+					parts.Add(display);
+					break;
+				case RequiredAttribute _:
+					parts.Add("Required");
+					break;
+				case KeyAttribute _:
+					parts.Add("Key");
+					break;
+				case ReadOnlyAttribute ro:
+					parts.Add($"ReadOnly={ro.IsReadOnly}");
+					break;
+				default:
+					// Fallback to attribute type name (without "Attribute" suffix)
+					var name = a.GetType().Name;
+					if (name.EndsWith("Attribute"))
+						name = name.Substring(0, name.Length - 9);
+					parts.Add(name);
+					break;
+			}
+		}
+		return string.Join(", ", parts);
+	}
+
+	private class PropertyDisplay
+	{
+		public string Name { get; set; } = string.Empty;
+		public string TypeName { get; set; } = string.Empty;
+		public string Attributes { get; set; } = string.Empty;
+	}
+	private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+	{
+		dropItem.Item.Selector = dropItem.DropzoneIdentifier;
+
+		var indexOffset = dropItem.DropzoneIdentifier switch
+		{
+			"2" => _dropzoneItems.Count(x => x.Selector == "1"),
+			_ => 0
+		};
+
+		_dropzoneItems.UpdateOrder(dropItem, item => item.Order, indexOffset);
+	}
+
+	private List<DropItem> _dropzoneItems = new();
+
+	private List<DropItem> _serverData = new();
+
+	private void RefreshContainer()
+	{
+		//update the binding to the container
+		StateHasChanged();
+
+		//the container refreshes the internal state
+		_container.Refresh();
+	}
+
+	private void LoadServerData()
+	{
+		//SelectedModelProperties.Clear();
+		@foreach (var prop in SelectedModelProperties)
+		{
+			var dropItem = new DropItem() { Order = 0, Name = prop.Name, Selector = "1" };
+			_serverData.Add(dropItem);
+		}
+		_dropzoneItems = _serverData
+					.OrderBy(x => x.Order)
+					.Select(item => new DropItem
+			{
+				Order = item.Order,
+				Name = item.Name,
+				Selector = item.Selector
+			})
+					.ToList();
+		RefreshContainer();
+	}
+
+	private void SaveData()
+	{
+		var viewModelProps = _dropzoneItems
+			.OrderBy(x => x.Order)
+			.Select(item => new DropItem
+			{
+				Order = item.Order,
+				Name = item.Name,
+				Selector = item.Selector
+			})
+			.ToList();
+	}
+	private void Reset()
+	{
+		_dropzoneItems = new();
+
+		RefreshContainer();
+	}
+	// Generate ViewModel from selected items in _dropzoneItems
+	private void GenerateViewModel()
+	{
+		GeneratedViewModelCode = string.Empty;
+
+		if (selectedType == null)
+			return;
+
+		// Class name: SelectedModel + "ViewModel" (fallback)
+		var className = string.IsNullOrWhiteSpace(SelectedModel) ? "GeneratedViewModel" : $"{SelectedModel}ViewModel";
+
+		var sb = new System.Text.StringBuilder();
+		sb.AppendLine("using System;");
+		sb.AppendLine("using System.ComponentModel;");
+		sb.AppendLine("using System.ComponentModel.DataAnnotations;");
+		sb.AppendLine();
+		sb.AppendLine($"public class {className}");
+		sb.AppendLine("{");
+
+		// Use dropzone order
+		var ordered = _dropzoneItems.Where(x => x.Selector == "2").OrderBy(x => x.Order).ToList();
+		foreach (var item in ordered)
+		{
+			// find property on the model type
+			var pi = selectedType.GetProperty(item.Name, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+			if (pi == null)
+			{
+				// fallback: just emit a string property
+				sb.AppendLine($"    // Property '{item.Name}' not found on '{selectedType.FullName}'");
+				sb.AppendLine($"    public string {item.Name} {{ get; set; }}");
+				sb.AppendLine();
+				continue;
+			}
+
+			var attrSrc = GetAttributeSource(pi);
+			if (!string.IsNullOrWhiteSpace(attrSrc))
+			{
+				sb.AppendLine($"    {attrSrc}");
+			}
+
+			sb.AppendLine($"    public {GetFullTypeName(pi.PropertyType)} {pi.Name} {{ get; set; }}");
+			sb.AppendLine();
+		}
+
+		sb.AppendLine("}");
+		GeneratedViewModelCode = sb.ToString();
+		StateHasChanged();
+	}
+
+	// Generate a MudForm Razor page string that binds to the generated ViewModel
+	private void GenerateFormPage()
+	{
+		GeneratedFormPageCode = string.Empty;
+		if (selectedType == null)
+			return;
+
+		var vmClass = string.IsNullOrWhiteSpace(SelectedModel) ? "GeneratedViewModel" : $"{SelectedModel}ViewModel";
+		var pageRoute = $"{vmClass}Form";
+
+		var sb = new System.Text.StringBuilder();
+		sb.AppendLine($"@page \"/{pageRoute}\"");
+		sb.AppendLine("@using MudBlazor");
+		sb.AppendLine("@using System");
+		sb.AppendLine("@using System.ComponentModel.DataAnnotations");
+		sb.AppendLine();
+		sb.AppendLine($"<MudPaper Class=\"pa-4\">");
+		sb.AppendLine($"  <MudText Typo=\"Typo.h5\">{vmClass} form</MudText>");
+		sb.AppendLine($"  <MudForm @ref=\"_form\">");
+		sb.AppendLine($"    <MudGrid>");
+
+		var ordered = _dropzoneItems.Where(x => x.Selector=="2").OrderBy(x => x.Order).ToList();
+		foreach (var item in ordered)
+		{
+			var pi = selectedType.GetProperty(item.Name, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+			if (pi == null)
+		    {
+				sb.AppendLine($"      <MudItem xs=\"12\">");
+				sb.AppendLine($"        <MudTextField @bind-Value=\"model.{item.Name}\" Label=\"{item.Name}\" />");
+				sb.AppendLine($"      </MudItem>");
+				continue;
+			}
+
+			var underlying = Nullable.GetUnderlyingType(pi.PropertyType) ?? pi.PropertyType;
+			var typeName = underlying.FullName ?? underlying.Name;
+
+			// emit a single MudItem row per property
+			sb.AppendLine($"      <MudItem xs=\"12\" sm=\"6\">");
+			// choose control based on type
+			if (underlying.IsEnum)
+			{
+				sb.AppendLine($"        <MudSelect T=\"{underlying.FullName}\" @bind-Value=\"model.{pi.Name}\" Label=\"{pi.Name}\">");
+				sb.AppendLine($"          @foreach (var v in Enum.GetValues(typeof({underlying.FullName})))");
+				sb.AppendLine($"          {{");
+				sb.AppendLine($"            <MudSelectItem Value=\"@((({underlying.FullName})v))\">@v</MudSelectItem>");
+				sb.AppendLine($"          }}");
+				sb.AppendLine($"        </MudSelect>");
+			}
+			else if (underlying == typeof(string))
+			{
+				var required = pi.GetCustomAttributes(true).Any(a => a is RequiredAttribute) ? " Required=\"true\"" : string.Empty;
+				sb.AppendLine($"        <MudTextField @bind-Value=\"model.{pi.Name}\" Label=\"{pi.Name}\"{required} />");
+			}
+			else if (underlying == typeof(bool))
+			{
+				sb.AppendLine($"        <MudCheckBox @bind-Checked=\"model.{pi.Name}\" Label=\"{pi.Name}\" />");
+			}
+			else if (underlying == typeof(DateTime))
+			{
+				sb.AppendLine($"        <MudDatePicker @bind-Date=\"model.{pi.Name}\" Label=\"{pi.Name}\" />");
+			}
+			else if (underlying == typeof(int) || underlying == typeof(long) || underlying == typeof(short) || underlying == typeof(byte))
+			{
+				sb.AppendLine($"        <MudNumericField T=\"{GetShortTypeName(underlying)}\" @bind-Value=\"model.{pi.Name}\" Label=\"{pi.Name}\" />");
+			}
+			else if (underlying == typeof(decimal) || underlying == typeof(double) || underlying == typeof(float))
+			{
+				sb.AppendLine($"        <MudNumericField T=\"{GetShortTypeName(underlying)}\" @bind-Value=\"model.{pi.Name}\" Label=\"{pi.Name}\" />");
+			}
+			else
+			{
+				// fallback to text
+				sb.AppendLine($"        <MudTextField @bind-Value=\"model.{pi.Name}\" Label=\"{pi.Name}\" />");
+			}
+			sb.AppendLine($"      </MudItem>");
+		}
+
+		sb.AppendLine($"    </MudGrid>");
+		sb.AppendLine();
+		sb.AppendLine($"    <MudStack Direction=\"Row\" Class=\"mt-4\">");
+		sb.AppendLine($"      <MudButton Variant=\"Variant.Filled\" Color=\"Color.Primary\" OnClick=\"Submit\">Submit</MudButton>");
+		sb.AppendLine($"      <MudButton Variant=\"Variant.Outlined\" Color=\"Color.Secondary\" OnClick=\"() => model = new {vmClass}()\">Reset</MudButton>");
+		sb.AppendLine($"    </MudStack>");
+		sb.AppendLine($"  </MudForm>");
+		sb.AppendLine($"</MudPaper>");
+		sb.AppendLine();
+		sb.AppendLine("@code {");
+		sb.AppendLine($"  private MudForm _form;");
+		sb.AppendLine($"  private {vmClass} model = new {vmClass}();");
+		sb.AppendLine();
+		sb.AppendLine($"  private async Task Submit()");
+		sb.AppendLine("  {");
+		sb.AppendLine("    await _form.Validate();");
+		sb.AppendLine("    if (_form.IsValid)");
+		sb.AppendLine("    {");
+		sb.AppendLine("      // TODO: handle valid submit");
+		sb.AppendLine("    }");
+		sb.AppendLine("  }");
+		sb.AppendLine("}");
+		GeneratedFormPageCode = sb.ToString();
+		StateHasChanged();
+	}
+
+
+	// Helpers for code generation (full type name and attribute source)
+	private static string GetFullTypeName(Type t)
+	{
+		if (t.IsGenericType)
+		{
+			var generic = t.GetGenericTypeDefinition();
+			var argNames = string.Join(", ", t.GetGenericArguments().Select(GetFullTypeName));
+			// prefer short generic name without `1 but include namespace for outer generic type
+			var outer = generic.FullName?.Split('`')[0] ?? generic.Name.Split('`')[0];
+			return $"{outer}<{argNames}>";
+		}
+		if (t.IsArray)
+			return $"{GetFullTypeName(t.GetElementType() ?? t)}[]";
+		// Use full name for clarity
+		return t.FullName ?? t.Name;
+	}
+
+
+	private static string GetShortTypeName(Type t)
+	{
+		// used for T="" in MudNumericField
+		if (t == typeof(int)) return "int";
+		if (t == typeof(long)) return "long";
+		if (t == typeof(short)) return "short";
+		if (t == typeof(byte)) return "byte";
+		if (t == typeof(decimal)) return "decimal";
+		if (t == typeof(double)) return "double";
+		if (t == typeof(float)) return "float";
+		return t.Name;
+	}
+
+	private static string GetAttributeSource(PropertyInfo p)
+	{
+		var list = new List<string>();
+		foreach (var cad in p.CustomAttributes)
+		{
+			var attrType = cad.AttributeType;
+			if (attrType == typeof(DisplayNameAttribute))
+			{
+				var val = cad.ConstructorArguments.FirstOrDefault().Value?.ToString() ?? "";
+				list.Add($"[DisplayName(\"{val}\")]");
+			}
+			else if (attrType == typeof(DisplayAttribute))
+			{
+				var nameArg = cad.NamedArguments.FirstOrDefault(a => a.MemberName == "Name").TypedValue.Value?.ToString();
+				if (!string.IsNullOrEmpty(nameArg))
+					list.Add($"[Display(Name = \"{nameArg}\")]");
+			}
+			else if (attrType == typeof(RequiredAttribute))
+			{
+				list.Add("[Required]");
+			}
+			else if (attrType == typeof(KeyAttribute))
+			{
+				list.Add("[Key]");
+			}
+			else if (attrType == typeof(ReadOnlyAttribute))
+			{
+				var val = cad.ConstructorArguments.FirstOrDefault().Value?.ToString() ?? "false";
+				list.Add($"[ReadOnly({val.ToLowerInvariant()})]");
+			}
+			else
+			{
+				var name = attrType.Name;
+				if (name.EndsWith("Attribute")) name = name.Substring(0, name.Length - 9);
+				list.Add($"[{name}]");
+			}
+		}
+		return list.Count == 0 ? string.Empty : string.Join(Environment.NewLine + "    ", list);
+	}
+
+	public class DropItem
+	{
+		public string Name { get; init; }
+		public string Selector { get; set; }
+		public int Order { get; set; }
+	}
+}
