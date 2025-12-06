@@ -1,0 +1,80 @@
+﻿@page "/people"
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+<h3>People</h3>
+<MudDataGrid @ref="_grid" Items="@_people" T="Person" Filterable="true" >
+    <Columns>
+        <PropertyColumn Property="x => x.Id" Title="Nr" />
+        <PropertyColumn Property="x => x.Name" Title="Name"  />
+        <PropertyColumn Property="x => x.Email" Title="Email"  />
+    </Columns>
+</MudDataGrid>
+
+<MudButton OnClick="SaveColumnOrder">Save Column Order</MudButton>
+<MudButton OnClick="LoadGridState">Set Column Order</MudButton>
+@code {
+    private MudDataGrid<Person> _grid;
+    private List<Person> _people = new()
+    {
+        new Person { Id = 1, Name = "Alice", Email = "alice@example.com" },
+        new Person { Id = 2, Name = "Bob", Email = "bob@example.com" }
+    };
+
+    public class Person
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+    }
+    private List<KeyValuePair<string, SortDefinition<Person>>> savedOrders = new();
+    private List<IFilterDefinition<Person>> savedFilters = new();
+    private void SaveColumnOrder1()
+    {
+        var columns = _grid.RenderedColumns
+                         .Select(c => new { c.Title})
+                         .ToList();
+        var orders = _grid.SortDefinitions
+                                 .Select(c => c) //=> new { c.Key, c.Value }
+                                         .ToList();
+        savedOrders = orders;
+        var filters = _grid.FilterDefinitions
+                    .Select(c => c) // => new { c.Title, c.Operator,c.Value }
+                    .ToList();
+        savedFilters = filters;
+        // Save 'order' to local storage, DB, etc.
+    }
+    private async Task SaveColumnOrder()
+    {
+        // Capture current grid state
+        savedOrders = _grid.SortDefinitions.ToList();
+        savedFilters = _grid.FilterDefinitions.ToList();
+
+        // Serialize to JSON
+        var ordersJson = System.Text.Json.JsonSerializer.Serialize(savedOrders);
+        var filtersJson = System.Text.Json.JsonSerializer.Serialize(savedFilters);
+
+        // Save to localStorage via JS interop
+        await JS.InvokeVoidAsync("localStorage.setItem", "people_savedOrders", ordersJson);
+        await JS.InvokeVoidAsync("localStorage.setItem", "people_savedFilters", filtersJson);
+    }
+
+    // Optional: Load saved state back from localStorage
+    private async Task LoadGridState()
+    {
+        var ordersJson = await JS.InvokeAsync<string>("localStorage.getItem", "people_savedOrders");
+        var filtersJson = await JS.InvokeAsync<string>("localStorage.getItem", "people_savedFilters");
+
+        if (!string.IsNullOrEmpty(ordersJson))
+            savedOrders = System.Text.Json.JsonSerializer.Deserialize<List<KeyValuePair<string, SortDefinition<Person>>>>(ordersJson);
+
+        if (!string.IsNullOrEmpty(filtersJson))
+            savedFilters = System.Text.Json.JsonSerializer.Deserialize<List<IFilterDefinition<Person>>>(filtersJson);
+    }
+
+    // CREATE TABLE UserSettings(
+    // UserId UNIQUEIDENTIFIER NOT NULL,
+    // SettingName NVARCHAR(200) NOT NULL,
+    // SettingValue NVARCHAR(MAX) NOT NULL,
+    // CONSTRAINT PK_UserSettings PRIMARY KEY(UserId, SettingName)
+// );
+}

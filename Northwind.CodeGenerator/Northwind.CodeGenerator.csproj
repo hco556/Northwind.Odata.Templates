@@ -16,5 +16,10 @@
     <Folder Include="Generated\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Asp.Versioning.OData" Version="8.2.0" />
+    <PackageReference Include="Microsoft.OData.ModelBuilder" Version="2.0.0" />
+  </ItemGroup>
+
 
 </Project>
