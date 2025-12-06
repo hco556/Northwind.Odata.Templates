@@ -119,7 +119,7 @@ This project also includes T4 templates for code generation and Kiota for genera
 - dotnet tool install --global Microsoft.OpenApi.Kiota
 - Generate the client code using the Kiota CLI:
 - kiota generate -l CSharp -c NorthwindClient -n Northwind.Odata.Api.Client -d https://localhost:5000/odata/openapi.json -o ./Northwind.Odata.Api.Client
-
+- kiota generate -l CSharp -c ODataOpenApiExampleClient -n MudBlazorWebAppTest.ApiClient -d https://localhost:5001/swagger/v3/swagger.json -o ./MudBlazorWebAppTest (ODataOpenApiExample)
 # To Do's:
 ## Use Relection in T4 templates:
 - example: https://blog.jermdavis.dev/posts/2023/migrating-t4-to-source-generators#top

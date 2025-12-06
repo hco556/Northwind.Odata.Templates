@@ -1,0 +1,62 @@
+﻿@page "/orders/edit/{OrderId:int}"
+@using Microsoft.Kiota.Abstractions.Authentication
+@using Microsoft.Kiota.Http.HttpClientLibrary
+@using MudBlazorWebAppTest.ApiClient
+@using MudBlazorWebAppTest.ApiClient.Api.Orders
+@using MudBlazorWebAppTest.ApiClient.Models
+@using static MudBlazorWebAppTest.ApiClient.Api.Orders.OrdersRequestBuilder
+@inject ISnackbar Snackbar
+
+<h3>EditOrder</h3>
+<MudForm>
+    @if (_order is null)
+    {
+        <MudText>Loading...</MudText>
+    }
+    else
+    {
+        <MudTextField @bind-Value="_order.Id" Label="Id" Required="true" />
+        <MudTextField @bind-Value="_order.Description" Label="Description" Required="true" />
+@*         <MudDatePicker @bind-Date="_order.CreatedDate" Label="Created Date" /> *@
+@*         <MudButton OnClick="SubmitForm">Submit</MudButton> *@
+    }
+</MudForm>
+@code {
+    [Parameter]
+    public int OrderId { get; set; }
+    private Order _order;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+
+            // API requires no authentication, so use the anonymous
+            // authentication provider
+            var authProvider = new AnonymousAuthenticationProvider();
+            // Create request adapter using the HttpClient-based implementation
+            var adapter = new HttpClientRequestAdapter(authProvider);
+            // Create the API client
+            var client = new ODataOpenApiExampleClient(adapter);
+            MudBlazorWebAppTest.ApiClient.Api.Orders.Item.WithKeyItemRequestBuilder.WithKeyItemRequestBuilderGetQueryParameters queryParameters = new();
+            queryParameters.ApiVersion = "3.0";
+
+            MudBlazorWebAppTest.ApiClient.Api.Orders.Item.WithKeyItemRequestBuilder requestBuilder = client.Api.Orders[OrderId];
+            var resp = await requestBuilder.GetAsync(rc =>
+                {
+                    rc.QueryParameters.ApiVersion = "3.0";
+                });
+
+            if (resp != null)
+                _order = resp as Order;
+            else
+                _order = new Order() { Id = 5 };
+            // _order = order ?? new Order() { Id = 5};
+        }
+        catch (Exception ex)
+        {
+            string error = ex.Message;
+            Snackbar.Add($"Error fetching order: {error}", Severity.Error);
+        }
+    }
+
+}

@@ -1,0 +1,46 @@
+﻿@using Microsoft.Kiota.Abstractions.Authentication
+@using Microsoft.Kiota.Http.HttpClientLibrary
+@using MudBlazorWebAppTest.ApiClient
+@using MudBlazorWebAppTest.ApiClient.Api.UserSettings
+@using static MudBlazorWebAppTest.ApiClient.Api.UserSettings.UserSettingsRequestBuilder
+<h3>UserSettings</h3>
+
+@code {
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        // API requires no authentication, so use the anonymous
+        // authentication provider
+        var authProvider = new AnonymousAuthenticationProvider();
+        // Create request adapter using the HttpClient-based implementation
+        var adapter = new HttpClientRequestAdapter(authProvider);
+        // Create the API client
+        var client = new ODataOpenApiExampleClient(adapter);
+
+        try
+        {
+            UserSettingsRequestBuilderGetQueryParameters userSettingsParams = new();
+            UserSettingsRequestBuilder userSettingsRequestBuilder = client.Api.UserSettings;
+            userSettingsParams.ApiVersion = "3.0";
+            userSettingsParams.SettingName = "Test";
+            userSettingsParams.UserId = Guid.NewGuid();
+            var userSettings = await userSettingsRequestBuilder.GetAsync(rc =>
+                {
+                    //rc.QueryParameters.Select = new string[] { "id", "title" }
+                    rc.QueryParameters.ApiVersion = "3.0";
+                    rc.QueryParameters.SettingName = "Test";
+                    rc.QueryParameters.UserId = userSettingsParams.UserId;
+                });
+
+        }
+        catch (Exception ex)
+        {
+            string error = ex.Message;
+        }
+    }
+
+    // Console.WriteLine($"Retrieved {employees.Value?.Count} employees.");
+   
+}

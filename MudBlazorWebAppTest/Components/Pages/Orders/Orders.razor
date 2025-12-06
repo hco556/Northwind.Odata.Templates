@@ -1,0 +1,78 @@
+﻿@page "/orders"
+@using Microsoft.Kiota.Abstractions.Authentication
+@using Microsoft.Kiota.Http.HttpClientLibrary
+@using MudBlazorWebAppTest.ApiClient
+@using MudBlazorWebAppTest.ApiClient.Api.Orders
+@using MudBlazorWebAppTest.ApiClient.Models
+@using static MudBlazorWebAppTest.ApiClient.Api.Orders.OrdersRequestBuilder
+@inject ISnackbar Snackbar
+<h3>Orders</h3>
+@if (_orders is null)
+{ <MudText>Loading...</MudText> }
+else
+{
+<MudDataGrid @ref="_grid" Items="@_orders" T="Order" Filterable="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Id" Title="Id" />
+        <PropertyColumn Property="x => x.CreatedDate" Title="Date Created" />
+        <PropertyColumn Property="x => x.Description" Title="Description" />
+            <TemplateColumn CellClass="d-flex justify-between">
+                <CellTemplate>
+
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(() => ShowEditForm(context.Item))" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => DeleteItem(context.Item))" />
+                </CellTemplate>
+            </TemplateColumn>
+@*             <TemplateColumn CellClass="d-flex justify-end">
+                <CellTemplate>
+                        <MudButton Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Primary" OnClick="ShowEditForm(context.Item)">Edit</MudButton>
+                </CellTemplate>
+            </TemplateColumn> *@
+    </Columns>
+</MudDataGrid>
+}
+@code {
+    private MudDataGrid<Order> _grid;
+    private List<Order> _orders;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (_orders == null)
+            {
+                // API requires no authentication, so use the anonymous
+                // authentication provider
+                var authProvider = new AnonymousAuthenticationProvider();
+                // Create request adapter using the HttpClient-based implementation
+                var adapter = new HttpClientRequestAdapter(authProvider);
+                // Create the API client
+                var client = new ODataOpenApiExampleClient(adapter);
+                OrdersRequestBuilderGetQueryParameters userSettingsParams = new();
+                OrdersRequestBuilder userSettingsRequestBuilder = client.Api.Orders;
+
+                var resp = await userSettingsRequestBuilder.GetAsync(rc =>
+                    {
+                        rc.QueryParameters.ApiVersion = "3.0";
+                    });
+                if (resp != null)
+                    _orders = resp?.Value;
+                else
+                    _orders = new List<Order>();
+            }
+        }
+        catch (Exception ex)
+        {
+            string error = ex.Message;
+            Snackbar.Add($"Error fetching orders: {error}", Severity.Error);
+        }
+    }
+    private void ShowEditForm(Order order)
+    {
+        Snackbar.Add($"Edit Order Id: {order.Id}", Severity.Info);
+    }
+    private void DeleteItem(Order item)
+    {
+        _orders.Remove(item);
+    }
+
+}
