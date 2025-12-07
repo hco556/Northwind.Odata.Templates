@@ -1,0 +1,143 @@
+﻿@page "/entity/edit/{Id:int}"
+@using Microsoft.Kiota.Abstractions.Authentication
+@using Microsoft.Kiota.Http.HttpClientLibrary
+@using MudBlazorWebAppTest.ApiClient
+@using MudBlazorWebAppTest.ApiClient.Api.Orders
+@using MudBlazorWebAppTest.ApiClient.Models
+@using static MudBlazorWebAppTest.ApiClient.Api.Orders.OrdersRequestBuilder
+@inject ISnackbar Snackbar
+
+<h3>EditOrder</h3>
+<MudForm>
+    @if (_order is null)
+    {
+        <MudText>Loading...</MudText>
+    }
+    else
+    {
+        <MudTextField @bind-Value="_order.Id" Label="Id" Required="true" />
+        <MudTextField @bind-Value="_order.Description" Label="Description" Required="true" />
+        <MudDatePicker @bind-Date="_creationDate"
+                       Label="Select date"
+                       DateFormat="yyyy-MM-dd"
+                       PickerVariant="PickerVariant.Dialog"
+                       OpenTo="OpenTo.Date"
+                    />
+
+        <MudSelectExtended T ="string"   MultiSelection="false" ItemCollection="_customers" SelectedValues="_selectedCustomer" SearchBox="true" SearchBoxAutoFocus="true" Label="Customer Search" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" HelperText="Search with 'Contains' logic" SearchBoxClearable="true" Clearable="true"/>
+
+        <MudSelectExtended T="LineItem" MultiSelection="true" ItemCollection="_lineItems" SelectedValues="_selectedLineItems" SearchBox="true" SearchBoxAutoFocus="true" Label="Line Items Search" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" HelperText="Search with 'Contains' logic" SearchBoxClearable="true" Clearable="true" />
+        
+         <MudButton OnClick="@(async() => await SaveOrder())">Save</MudButton> 
+    }
+</MudForm>
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    // API requires no authentication, so use the anonymous
+    // authentication provider
+    private AnonymousAuthenticationProvider authProvider = new AnonymousAuthenticationProvider();
+    // Create request adapter using the HttpClient-based implementation
+    private HttpClientRequestAdapter adapter;
+    // Create the API client
+    private ODataOpenApiExampleClient client;
+    private Order _order;
+    private ICollection<LineItem> _lineItems;
+    private ICollection<string> _customers;
+    private ICollection<string> _selectedCustomer;
+    private ICollection<LineItem>? _selectedLineItems = new List<LineItem>();
+    private DateTime? _creationDate
+    {
+        get => _dateTimeOffset?.DateTime;
+        set
+        {
+            if (value.HasValue)
+                _dateTimeOffset = new DateTimeOffset(value.Value, _timeZoneOffset);
+            else
+                _dateTimeOffset = null;
+        }
+    }
+
+    // Public DateTimeOffset property
+    private DateTimeOffset? _dateTimeOffset;
+    /// </summary> <summary>
+    /// 
+
+    // Example: Use local time zone offset
+    private TimeSpan _timeZoneOffset = TimeZoneInfo.Local.GetUtcOffset(DateTime.UtcNow);
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            adapter = new HttpClientRequestAdapter(authProvider);
+            // Create the API client
+            client = new ODataOpenApiExampleClient(adapter);
+            GetCustomers();
+            GetLineItems();
+            // Initialize with today's date
+            _dateTimeOffset = DateTimeOffset.Now;
+
+            MudBlazorWebAppTest.ApiClient.Api.Orders.Item.WithKeyItemRequestBuilder.WithKeyItemRequestBuilderGetQueryParameters queryParameters = new();
+            queryParameters.ApiVersion = "3.0";
+
+            MudBlazorWebAppTest.ApiClient.Api.Orders.Item.WithKeyItemRequestBuilder requestBuilder = client.Api.Orders[Id];
+            var resp = await requestBuilder.GetAsync(rc =>
+                {
+                    rc.QueryParameters.ApiVersion = "3.0";
+
+                });
+
+            if (resp != null)
+                _order = resp as Order;
+            else
+                _order = new Order() { Id = 5, CreatedDate = DateTimeOffset.Now, EffectiveDate=DateTimeOffset.Now  };
+            var lineItems = _order.LineItems;
+            _dateTimeOffset = _order.CreatedDate;
+            var customerList = new List<string>();
+            if (_order.Customer != null)
+                customerList.Add(_order.Customer);
+            _selectedCustomer = customerList;
+        }
+        catch (Exception ex)
+        {
+            string error = ex.Message;
+            Snackbar.Add($"Error fetching order: {error}", Severity.Error);
+        }
+    }
+    private void GetLineItems()
+    {
+        var list = new List<LineItem>();
+        list.Add(new LineItem { Number = 100, Quantity = 10, UnitPrice = 100.55, Fulfilled = true, Description = "Line Item 1", });
+        list.Add(new LineItem { Number = 101, Quantity = 10, UnitPrice = 100.55, Fulfilled = true, Description = "Line Item 2", });
+        list.Add(new LineItem { Number = 102, Quantity = 1, UnitPrice = 1000.55, Fulfilled = true, Description = "Line Item 3", });
+        list.Add(new LineItem { Number = 103, Quantity = 5, UnitPrice = 55.55, Fulfilled = false, Description = "Line Item 4", });
+        list.Add(new LineItem { Number = 104, Quantity = 3, UnitPrice = 30.33, Fulfilled = false, Description = "Line Item 5", });
+        _lineItems = list;
+    }
+
+    private void GetCustomers()
+    {
+        var list = new List<string>();
+        list.Add("customer1");
+        list.Add("customer2");
+        list.Add("customer3");
+        _customers = list;
+
+    }
+    private async Task SaveOrder()
+    {
+        try
+        {
+            OrdersRequestBuilder ordersRequestBuilder = client.Api.Orders;
+            _order.CreatedDate = new DateTimeOffset((DateTime)_creationDate, _timeZoneOffset);
+            _order.Customer = _selectedCustomer.FirstOrDefault();
+            _order.LineItems = _selectedLineItems.ToList();
+            var resp = await ordersRequestBuilder.PostAsync(_order);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error Saving Order: " + ex.Message);    
+        }
+    }
+}
