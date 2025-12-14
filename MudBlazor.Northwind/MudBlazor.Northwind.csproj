@@ -67,6 +67,15 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>TextTemplate.tt</DependentUpon>
     </None>
+    <None Update="ViewModels\EntiesEditForm.tt">
+      <LastGenOutput>EntiesEditForm.txt</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="ViewModels\EntiesEditForm.txt">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>EntiesEditForm.tt</DependentUpon>
+    </None>
   </ItemGroup>
 
 

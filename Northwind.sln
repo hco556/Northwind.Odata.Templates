@@ -33,6 +33,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazorWebAppTest", "MudB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ODataOpenApiExample", "ODataOpenApiExample\ODataOpenApiExample.csproj", "{BFCDECFD-6209-B461-BDE1-DD17ED82241F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interactive.Lib.Shared", "Interactive.Lib.Shared\Interactive.Lib.Shared.csproj", "{5A85445F-5A3B-44ED-5474-6C8121A8C1C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InteractiveMudBlazorServer_Net9", "InteractiveMudBlazorServer_Net9\InteractiveMudBlazorServer_Net9.csproj", "{23B85DD8-39CF-DF7D-F8B2-6C6DD7B7F8D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -223,6 +227,30 @@ Global
 		{BFCDECFD-6209-B461-BDE1-DD17ED82241F}.Release|x64.Build.0 = Release|Any CPU
 		{BFCDECFD-6209-B461-BDE1-DD17ED82241F}.Release|x86.ActiveCfg = Release|Any CPU
 		{BFCDECFD-6209-B461-BDE1-DD17ED82241F}.Release|x86.Build.0 = Release|Any CPU
+		{5A85445F-5A3B-44ED-5474-6C8121A8C1C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A85445F-5A3B-44ED-5474-6C8121A8C1C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A85445F-5A3B-44ED-5474-6C8121A8C1C8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5A85445F-5A3B-44ED-5474-6C8121A8C1C8}.Debug|x64.Build.0 = Debug|Any CPU
+		{5A85445F-5A3B-44ED-5474-6C8121A8C1C8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5A85445F-5A3B-44ED-5474-6C8121A8C1C8}.Debug|x86.Build.0 = Debug|Any CPU
+		{5A85445F-5A3B-44ED-5474-6C8121A8C1C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A85445F-5A3B-44ED-5474-6C8121A8C1C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A85445F-5A3B-44ED-5474-6C8121A8C1C8}.Release|x64.ActiveCfg = Release|Any CPU
+		{5A85445F-5A3B-44ED-5474-6C8121A8C1C8}.Release|x64.Build.0 = Release|Any CPU
+		{5A85445F-5A3B-44ED-5474-6C8121A8C1C8}.Release|x86.ActiveCfg = Release|Any CPU
+		{5A85445F-5A3B-44ED-5474-6C8121A8C1C8}.Release|x86.Build.0 = Release|Any CPU
+		{23B85DD8-39CF-DF7D-F8B2-6C6DD7B7F8D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23B85DD8-39CF-DF7D-F8B2-6C6DD7B7F8D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23B85DD8-39CF-DF7D-F8B2-6C6DD7B7F8D9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{23B85DD8-39CF-DF7D-F8B2-6C6DD7B7F8D9}.Debug|x64.Build.0 = Debug|Any CPU
+		{23B85DD8-39CF-DF7D-F8B2-6C6DD7B7F8D9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{23B85DD8-39CF-DF7D-F8B2-6C6DD7B7F8D9}.Debug|x86.Build.0 = Debug|Any CPU
+		{23B85DD8-39CF-DF7D-F8B2-6C6DD7B7F8D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23B85DD8-39CF-DF7D-F8B2-6C6DD7B7F8D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23B85DD8-39CF-DF7D-F8B2-6C6DD7B7F8D9}.Release|x64.ActiveCfg = Release|Any CPU
+		{23B85DD8-39CF-DF7D-F8B2-6C6DD7B7F8D9}.Release|x64.Build.0 = Release|Any CPU
+		{23B85DD8-39CF-DF7D-F8B2-6C6DD7B7F8D9}.Release|x86.ActiveCfg = Release|Any CPU
+		{23B85DD8-39CF-DF7D-F8B2-6C6DD7B7F8D9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

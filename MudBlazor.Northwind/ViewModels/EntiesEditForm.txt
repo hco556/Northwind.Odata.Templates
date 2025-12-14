@@ -1,0 +1,199 @@
+
+@using MudBlazor
+@using MudBlazor.Northwind.Mappers.Employee
+@using MudBlazor.Northwind.Services
+@using MudBlazor.Northwind.ViewModels
+@using MudBlazor.Extensions
+@using MudBlazor.Extensions.Options
+@inject NavigationManager NavigationManager
+#region Employee
+
+<EditForm Model="@Model"  OnValidSubmit="HandleValidSubmit" >
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <MudCard Class="pa-4">
+        <MudCardContent>
+            <MudGrid>
+
+                <MudItem xs="12" sm="6">
+                    <MudNumericField T="int"
+                                     Label="Employee Id"
+                                     @bind-Value="Model.EmployeeId"
+                                     Disabled="true" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudTextField Label="First Name"
+                                  @bind-Value="Model.FirstName"
+                                  Required="true" />
+                    <ValidationMessage For="@(() => Model.FirstName)" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudTextField Label="Last Name"
+                                  @bind-Value="Model.LastName"
+                                  Required="true" />
+                    <ValidationMessage For="@(() => Model.LastName)" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudTextField Label="Title"
+                                  @bind-Value="Model.Title" />
+                    <ValidationMessage For="@(() => Model.Title)" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudTextField Label="Password"
+                                  @bind-Value="Model.Password"
+                                  InputType="InputType.Password"
+                                  Required="true" />
+                    <ValidationMessage For="@(() => Model.Password)" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudTextField Label="Title Of Courtesy"
+                                  @bind-Value="Model.TitleOfCourtesy" />
+                    <ValidationMessage For="@(() => Model.TitleOfCourtesy)" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudDatePicker Label="Birth Date"
+                                   @bind-Date="Model.BirthDate"
+                                   MaxDate="@(DateTime.Today)"
+                                   PickerVariant="PickerVariant.Dialog"
+                                   Clearable="true" />
+                    <ValidationMessage For="@(() => Model.BirthDate)" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudDatePicker @bind-Date="Model.HireDate" Label="Hire Date, Not working days, Sunday in red"
+                                   IsDateDisabledFunc="@((DateTime dt)=>((int)dt.DayOfWeek > 0 && (int)dt.DayOfWeek < 6))"
+                                   AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))"
+                                   Mask="@(new DateMask("dd/MM/yyyy"))" DateFormat="dd/MM/yyyy" Placeholder="de-AT Date" Variant="Variant.Text" PickerVariant="PickerVariant.Dialog" Clearable="true" />
+@*                     <MudDatePicker Label="Hire Date"
+                                   @bind-Date="Model.HireDate"
+                                   PickerVariant="PickerVariant.Dialog"
+                                   Clearable="true" /> *@
+                    <ValidationMessage For="@(() => Model.HireDate)" />
+                </MudItem>
+
+                <MudItem xs="12">
+                    <MudTextField Label="Address" @bind-Value="Model.Address" />
+                </MudItem>
+
+                <MudItem xs="12" sm="4">
+                    <MudTextField Label="City" @bind-Value="Model.City" />
+                </MudItem>
+                <MudItem xs="12" sm="4">
+                    <MudTextField Label="Region" @bind-Value="Model.Region" />
+                </MudItem>
+                <MudItem xs="12" sm="4">
+                    <MudTextField Label="Postal Code" @bind-Value="Model.PostalCode" />
+                </MudItem>
+
+                <MudItem xs="12">
+                    <MudTextField Label="Home Phone" @bind-Value="Model.HomePhone" />
+                </MudItem>
+
+                <MudItem xs="12">
+                    <MudTextField Label="Notes" @bind-Value="Model.Notes" Lines="3" />
+                </MudItem>
+                  <MudItem xs="12">
+                    <MudExSelect T="EmployeeViewModel" Label="Reports To"
+                                 ItemCollection="@_managers"
+                                 Value="@Model.ReportsTo"
+                                 ValueChanged="@ReportsToEmployeeChanged"
+                                 MultiSelection="false"
+                                 SearchBox="true"
+                                 SearchBoxVariant="Variant.Text"
+                                 Color="Color.Primary"
+                                 SelectAll="false">
+                    </MudExSelect>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudExSelect T="OrderViewModel"
+                                 Variant="Variant.Text"
+                                 SelectedValues="@(Model.Orders)"          
+                                 MultiSelection="true"
+                                 SelectAll="true"
+                                 PopoverAnimation="AnimationType.Pulse"
+                                 ItemCollection="@_orders" SearchBox="true" Label="Orders" AnchorOrigin="Origin.BottomCenter">
+                    </MudExSelect>
+                </MudItem>
+@*                 <MudItem xs="12">
+                    <MudPaper Class="pa-4 mud-height-full">
+                        <MudText Typo="Typo.subtitle2">Validation Summary</MudText>
+                        @if (success)
+                        {
+                            <MudText Color="Color.Success">Success</MudText>
+                        }
+                        else
+                        {
+                            <MudText Color="@Color.Error">
+                                <ValidationSummary />
+                            </MudText>
+                        }
+                    </MudPaper>
+                </MudItem> *@
+            </MudGrid>
+        </MudCardContent>
+
+        <MudCardActions Class="justify-end">
+            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+        </MudCardActions>
+    </MudCard>
+
+
+  
+</EditForm>
+
+@code {
+    //  [Parameter]
+    private EmployeeViewModel Model= new EmployeeViewModel();// { get; set; } = new EmployeeViewModel();
+    bool success = false;
+    // [Parameter]
+    //  public EventCallback<EmployeeViewModel> OnValidSubmit { get; set; }
+
+    // private EditContext? _editContext;
+    private List<EmployeeViewModel> _managers = new();
+    private List<OrderViewModel> _orders = new();
+    protected override async Task OnInitializedAsync()
+    {
+        Model = await kiotaRequestBuilder.GetEmployeeByName("Doe");
+
+        Model ??= new EmployeeViewModel()
+        {
+
+        };
+        _managers = (await kiotaRequestBuilder.GetAllEmployees()).Where(e => e.EmployeeId != Model.EmployeeId).ToList();
+}
+        //  _editContext = new EditContext(Model);
+    }
+    private async Task ReportsToEmployeeChanged(EmployeeViewModel obj)
+    {
+        Model.ReportsTo = obj;
+    }
+    private async Task HandleValidSubmit()
+    {
+        // Model passed DataAnnotations validation (including NotInFuture and PasswordComplexity)
+      //  if (OnValidSubmit.HasDelegate)
+       //     await OnValidSubmit.InvokeAsync(Model);
+        success = true;
+        StateHasChanged();
+    }
+
+
+
+    private void Cancel()
+    {
+        // navigate back or close dialog - change route as needed
+        NavigationManager.NavigateTo("/");
+    }
+}
+
+
+#endregion Employee
+
+      
