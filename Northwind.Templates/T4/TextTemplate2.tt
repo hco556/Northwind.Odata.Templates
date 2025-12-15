@@ -11,22 +11,12 @@
 <#@ import namespace="System.Text.Json.Serialization" #>
 <#@ import namespace="System.ComponentModel" #>      
 <# 
-    var baseType = typeof(Northwind.Templates.AClass); 
-    var types = baseType.Assembly.GetTypes().Where(t => t != baseType && baseType.IsAssignableFrom(t) && t.IsPublic && t.IsInterface);
-    var Properties = typeof(Northwind.Templates.AClass).GetProperties();
+
 #> 
 Test
 <#=System.Environment.Version #>  
-<# for( int i = 0; i < 12; ++i ) { #> 
+<# for( int i = 0; i < 12; ++i ) { #>
 #<#= i + 1 #>
 <# } #>
 
 <#= JsonSerializer.Serialize(new DateTime(2019, 10, 2)) #>
-<#= types.Count() #>
-
-<# foreach(var t in types) { #>
-<#= t.FullName #>
-<# } #>
-<# foreach (var property in Properties) { #>
-<#= property.Name #>
-<# } #>

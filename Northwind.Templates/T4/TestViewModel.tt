@@ -1,0 +1,61 @@
+<#@ template language="C#" debug="false" hostspecific="true" #>
+<#@ output extension=".cs" #>
+<#@ template language="C#" hostspecific="True" #>
+<#
+    var entitySets = new EntitySet[]  
+    {
+        new EntitySet("Employee", "Employee", "EmployeeId", "int"),
+         
+    };
+    var propertySets = new PropertySet[]
+    {
+        new PropertySet("Id","int"), 
+        new PropertySet("Name","string")
+    };
+#>
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Shared.Models;
+<# foreach(var entitySet in entitySets) { #>
+#region <#= entitySet.EntitySetName #>ViewModel
+
+    public class <#= entitySet.EntitySetName #>ViewModel
+    {
+        <# foreach(var propertySet in propertySets) { #>
+            public <#= propertySet.PropertyType #> <#= propertySet.PropertyName #> {get;set;}
+        <#  }#>
+    }
+#endregion <#= entitySet.EntitySetName #>ViewModel
+
+ <#  }#>
+
+<#+
+	public class EntitySet 
+    {
+        public readonly string EntityName;
+        public readonly string EntityKeyName;
+        public readonly string EntityKeyType;
+        public readonly string EntitySetName;
+        
+        public EntitySet (string entitySetName, string entityName, string entityKeyName, string entityKeyType) 
+        {
+            EntitySetName = entitySetName;
+            EntityName = entityName;
+            EntityKeyName = entityKeyName;
+            EntityKeyType = entityKeyType;
+        }
+    } 
+    public class PropertySet
+    {
+        public readonly string PropertyName;
+        public readonly string PropertyType;
+         
+        public PropertySet(string propertyName, string propertyType) 
+        {
+            PropertyName = propertyName;
+            PropertyType = propertyType;
+        }
+    }
+
+#>

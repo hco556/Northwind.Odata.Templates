@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>Northwind.Templates</RootNamespace>
   </PropertyGroup>
 
@@ -11,18 +11,53 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Shared.Models\Shared.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="T4\TestViewModel.tt">
+      <LastGenOutput>TestViewModel.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="T4\TextTemplate2.tt">
+      <LastGenOutput>TextTemplate2.txt</LastGenOutput>
+      <Generator>TextTemplatingFileGeneratorCore</Generator>
+    </None>
+    <None Update="T4\TextTemplate2.txt">
+      <DependentUpon>TextTemplate2.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </None>
     <None Update="TextTemplate.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TextTemplate.txt</LastGenOutput>
+    </None>
+    <None Update="TextTemplate.txt">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TextTemplate.tt</DependentUpon>
     </None>
     <None Update="TextTemplate2.tt">
       <LastGenOutput>TextTemplate2.txt</LastGenOutput>
       <Generator>TextTemplatingFileGeneratorCore</Generator>
     </None>
+    <None Update="TextTemplate2.txt">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TextTemplate2.tt</DependentUpon>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="T4\TestViewModel.cs">
+      <DependentUpon>TestViewModel.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
   </ItemGroup>
 
 </Project>
